@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meta Andromeda — Medya Ajansına Etkisi</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #0a0e1a;
+    --bg-card: #111827;
+    --bg-card-hover: #1a2236;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-orange: #f97316;
+    --accent-red: #ef4444;
+    --accent-green: #10b981;
+    --accent-purple: #8b5cf6;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border: #1e293b;
+    --before-color: #f97316;
+    --after-color: #06b6d4;
+    --glow-before: rgba(249, 115, 22, 0.15);
+    --glow-after: rgba(6, 182, 212, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+    position: relative;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 60px 0 50px;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, rgba(249, 115, 22, 0.05) 40%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: 100px;
+    padding: 8px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent-blue);
+    margin-bottom: 28px;
+    animation: fadeInDown 0.8s ease;
+  }
+
+  .badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    animation: fadeInDown 0.8s ease 0.1s both;
+  }
+
+  .hero h1 .gradient-text {
+    background: linear-gradient(135deg, var(--accent-orange), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero .subtitle {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+    animation: fadeInDown 0.8s ease 0.2s both;
+  }
+
+  .hero .meta-info {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    animation: fadeInDown 0.8s ease 0.3s both;
+  }
+
+  .meta-info span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 48px;
+    animation: fadeInDown 0.8s ease 0.4s both;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  .legend-dot.before { background: var(--before-color); }
+  .legend-dot.after { background: var(--after-color); }
+
+  /* Grid */
+  .aspects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .aspect-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease forwards;
+    position: relative;
+  }
+
+  .aspect-row:nth-child(1) { animation-delay: 0.1s; }
+  .aspect-row:nth-child(2) { animation-delay: 0.15s; }
+  .aspect-row:nth-child(3) { animation-delay: 0.2s; }
+  .aspect-row:nth-child(4) { animation-delay: 0.25s; }
+  .aspect-row:nth-child(5) { animation-delay: 0.3s; }
+  .aspect-row:nth-child(6) { animation-delay: 0.35s; }
+  .aspect-row:nth-child(7) { animation-delay: 0.4s; }
+  .aspect-row:nth-child(8) { animation-delay: 0.45s; }
+  .aspect-row:nth-child(9) { animation-delay: 0.5s; }
+  .aspect-row:nth-child(10) { animation-delay: 0.55s; }
+
+  .aspect-row:hover .cell { background: var(--bg-card-hover); }
+
+  .aspect-header {
+    grid-column: 1 / -1;
+    background: var(--bg-card);
+    padding: 16px 24px 8px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .aspect-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent-blue);
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    flex-shrink: 0;
+  }
+
+  .aspect-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .aspect-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .cell {
+    background: var(--bg-card);
+    padding: 14px 24px 20px;
+    transition: background 0.3s ease;
+    position: relative;
+  }
+
+  .cell-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .cell.before .cell-label { color: var(--before-color); }
+  .cell.after .cell-label { color: var(--after-color); }
+
+  .cell-label::before {
+    content: '';
+    width: 8px;
+    height: 2px;
+    border-radius: 1px;
+  }
+
+  .cell.before .cell-label::before { background: var(--before-color); }
+  .cell.after .cell-label::before { background: var(--after-color); }
+
+  .cell p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+  }
+
+  .cell .highlight {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .cell.before .highlight { color: var(--before-color); }
+  .cell.after .highlight { color: var(--after-color); }
+
+  /* Stat callouts */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 40px;
+    animation: fadeInUp 0.6s ease 0.6s both;
+  }
+
+  .stat-card {
+    background: var(--bg-card);
+    padding: 28px 20px;
+    text-align: center;
+    transition: background 0.3s ease;
+  }
+
+  .stat-card:hover { background: var(--bg-card-hover); }
+
+  .stat-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .stat-card:nth-child(1) .stat-value { color: var(--accent-cyan); }
+  .stat-card:nth-child(2) .stat-value { color: var(--accent-orange); }
+  .stat-card:nth-child(3) .stat-value { color: var(--accent-green); }
+  .stat-card:nth-child(4) .stat-value { color: var(--accent-purple); }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* Kozmonot CTA */
+  .cta-section {
+    margin-top: 40px;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(249, 115, 22, 0.08));
+    border: 1px solid rgba(6, 182, 212, 0.15);
+    border-radius: 16px;
+    padding: 32px;
+    animation: fadeInUp 0.6s ease 0.7s both;
+  }
+
+  .cta-section h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+  }
+
+  .cta-section p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .cta-section .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 4px;
+    padding: 3px 10px;
+    margin-bottom: 14px;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    animation: fadeInUp 0.6s ease 0.8s both;
+  }
+
+  .footer p {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  .footer .sources {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    line-height: 1.8;
+  }
+
+  /* Animations */
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .container { padding: 24px 16px 40px; }
+    .hero { padding: 40px 0 36px; }
+    .hero h1 { font-size: 28px; }
+    .aspect-row { grid-template-columns: 1fr; }
+    .stat-strip { grid-template-columns: repeat(2, 1fr); }
+    .meta-info { gap: 16px; }
+    .legend { gap: 24px; }
+    .cell { padding: 12px 18px 16px; }
+    .aspect-header { padding: 14px 18px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="badge">Güncel Analiz — 2025</div>
+    <h1>Meta <span class="gradient-text">Andromeda</span><br>Medya Ajansına Etkisi</h1>
+    <p class="subtitle">Meta'nın reklam dağıtım motorunu sıfırdan yeniden inşa ettiği Andromeda güncellemesi, medya ajanslarının iş yapış biçimini 10 kritik boyutta dönüştürüyor.</p>
+    <div class="meta-info">
+      <span>📅 Global Rollout: Ekim 2025</span>
+      <span>⚙️ AI-Driven Retrieval Engine</span>
+      <span>📊 10 Boyutlu Karşılaştırma</span>
+    </div>
+  </header>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot before"></div>
+      <span style="color: var(--before-color);">Öncesi</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot after"></div>
+      <span style="color: var(--after-color);">Sonrası</span>
+    </div>
+  </div>
+
+  <!-- Aspects -->
+  <div class="aspects-grid">
+
+    <!-- 1 -->
+    <div class="aspect-row">
+      <div class="aspect-header">
+        <span class="aspect-number">01</span>
+        <span class="aspect-icon">🎯</span>
+        <span class="aspect-title">Hedefleme Yaklaşımı</span>
+      </div>
+      <div class="cell before">
+        <div class="cell-label">Öncesi</div>
+        <p>Manuel kitle segmentasyonu: ilgi alanları, davranışlar, demografi ve lookalike'lar <span class="highlight">titizlikle kurgulanırdı.</span> Ajansın "hedefleme uzmanlığı" temel rekabet avantajıydı.</p>
+      </div>
+      <div class="cell after">
+        <div class="cell-label">Sonrası</div>
+        <p><span class="highlight">Broad targeting norm oldu.</span> Algoritma kullanıcı bazında gerçek zamanlı karar veriyor. Dar kitleler performansı düşürüyor. Ajansın hedefleme kurma işi fiilen ortadan kalktı.</p>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="aspect-row">
+      <div class="aspect-header">
+        <span class="aspect-number">02</span>
+        <span class="aspect-icon">🎨</span>
+        <span class="aspect-title">Kreatif Üretim Hacmi</span>
+      </div>
+      <div class="cell before">
+        <div class="cell-label">Öncesi</div>
+        <p>Kampanya başına <span class="highlight">3-6 reklam</span> yeterliydi. Bir "kazanan" reklam bulunup bütçe oraya yığılırdı. Küçük varyasyonlar farklı reklam sayılırdı.</p>
+      </div>
+      <div class="cell after">
+        <div class="cell-label">Sonrası</div>
+        <p>Kampanya başına <span class="highlight">8-15+ gerçekten farklı konsept</span> gerekiyor. Sistem visual pattern-matching yapıyor; benzer setup'lar aynı reklam olarak gruplandırılıyor.</p>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="aspect-row">
+      <div class="aspect-header">
+        <span class="aspect-number">03</span>
+        <span class="aspect-icon">💎</span>
+        <span class="aspect-title">Ajans Değer Önerisi</span>
+      </div>
+      <div class="cell before">
+        <div class="cell-label">Öncesi</div>
+        <p>"Doğru kitleyi bulma" ve kampanya yapısını optimize etme becerisine dayanıyordu. <span class="highlight">Media buying uzmanlığı</span> ön plandaydı.</p>
+      </div>
+      <div class="cell after">
+        <div class="cell-label">Sonrası</div>
+        <p>Değer önerisi <span class="highlight">"creative engineering"e</span> kaydı. Stratejik değer: analitik, kreatif çeşitlilik ve veri mimarisi üçgeninde. Beklenti "algoritma besleyen ekosistem kur"a dönüştü.</p>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="aspect-row">
+      <div class="aspect-header">
+        <span class="aspect-number">04</span>
+        <span class="aspect-icon">🏗️</span>
+        <span class="aspect-title">Kampanya Yapısı</span>
+      </div>
+      <div class="cell before">
+        <div class="cell-label">Öncesi</div>
+        <p>Çok sayıda ad set, segmentlere özel kampanyalar, <span class="highlight">karmaşık funnel yapıları.</span> Yapısal kompleksite bir uzmanlık göstergesiydi.</p>
+      </div>
+      <div class="cell after">
+        <div class="cell-label">Sonrası</div>
+        <p><span class="highlight">Sadeleşme zorunlu.</span> Daha az kampanya, daha az ad set, daha geniş hedefleme. Karmaşık yapılar algoritmanın öğrenme hızını kısıtlıyor.</p>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="aspect-row">
+      <div class="aspect-header">
+        <span class="aspect-number">05</span>
+        <span class="aspect-icon">💰</span>
+        <span class="aspect-title">Bütçe Dağılımı ve Maliyet</span>
+      </div>
+      <div class="cell before">
+        <div class="cell-label">Öncesi</div>
+        <p>Bütçe kontrolü <span class="highlight">nispeten öngörülebilirdi.</span> Küçük bütçeler bile niş hedeflemeyle sonuç alabilirdi.</p>
+      </div>
+      <div class="cell after">
+        <div class="cell-label">Sonrası</div>
+        <p>Büyük bütçeler avantajlı; sistem yüksek data hacmiyle daha iyi öğreniyor. <span class="highlight">Küçük markaların CPA'sı yükseldi,</span> performans volatilitesi arttı.</p>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="aspect-row">
+      <div class="aspect-header">
+        <span class="aspect-number">06</span>
+        <span class="aspect-icon">📊</span>
+        <span class="aspect-title">Ölçümleme ve Raporlama</span>
+      </div>
+      <div class="cell before">
+        <div class="cell-label">Öncesi</div>
+        <p>Attribution nispeten anlaşılırdı. <span class="highlight">Hangi kitle, hangi reklam, ne sonuç verdi</span> takip edilebilirdi.</p>
+      </div>
+      <div class="cell after">
+        <div class="cell-label">Sonrası</div>
+        <p><span class="highlight">Attribution bulanıklaştı.</span> Conversion lag arttı, ROI takibi karmaşıklaştı. Creative Similarity Report ve creative fatigue metrikleri kritik hale geldi.</p>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="aspect-row">
+      <div class="aspect-header">
+        <span class="aspect-number">07</span>
+        <span class="aspect-icon">👥</span>
+        <span class="aspect-title">Ekip Yetkinlikleri</span>
+      </div>
+      <div class="cell before">
+        <div class="cell-label">Öncesi</div>
+        <p>Media buyer profili: <span class="highlight">platform bilgisi, bid stratejisi, kitle araştırması,</span> A/B test kurgusu.</p>
+      </div>
+      <div class="cell after">
+        <div class="cell-label">Sonrası</div>
+        <p><span class="highlight">Creative strategist + data analyst</span> profili ön planda. UGC üretim kapasitesi, kreatif pipeline hızı ve CAPI/data hygiene bilgisi belirleyici.</p>
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="aspect-row">
+      <div class="aspect-header">
+        <span class="aspect-number">08</span>
+        <span class="aspect-icon">🔗</span>
+        <span class="aspect-title">Veri Bağımlılığı</span>
+      </div>
+      <div class="cell before">
+        <div class="cell-label">Öncesi</div>
+        <p>Pixel verisi ve platform içi sinyaller yeterliydi. <span class="highlight">First-party data "nice to have"</span> konumundaydı.</p>
+      </div>
+      <div class="cell after">
+        <div class="cell-label">Sonrası</div>
+        <p><span class="highlight">CAPI entegrasyonu zorunlu.</span> Event Match Quality, deduplication ve first-party data kalitesi kritik. Meta'ya veri bağımlılığı derinleşiyor.</p>
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="aspect-row">
+      <div class="aspect-header">
+        <span class="aspect-number">09</span>
+        <span class="aspect-icon">⚔️</span>
+        <span class="aspect-title">Rekabet Dinamikleri</span>
+      </div>
+      <div class="cell before">
+        <div class="cell-label">Öncesi</div>
+        <p>İyi hedefleme yapan ajans, <span class="highlight">zayıf kreatifle bile sonuç alabilirdi.</span> Teknik kampanya yönetimi farklılaştırıcıydı.</p>
+      </div>
+      <div class="cell after">
+        <div class="cell-label">Sonrası</div>
+        <p>Kreatif kalitesi <span class="highlight">"eleme kriteri"</span> oldu. Zayıf kreatif auction'a bile giremiyor. Rekabet "kim daha iyi hikaye anlatır" üzerinden şekilleniyor.</p>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="aspect-row">
+      <div class="aspect-header">
+        <span class="aspect-number">10</span>
+        <span class="aspect-icon">🤝</span>
+        <span class="aspect-title">Müşteri İlişkisi ve Beklenti Yönetimi</span>
+      </div>
+      <div class="cell before">
+        <div class="cell-label">Öncesi</div>
+        <p>"Bu ay CPA'yı %15 düşürdük" gibi <span class="highlight">net metriklerle raporlama</span> yapılabiliyordu. Performans nispeten stabil, güven kolaydı.</p>
+      </div>
+      <div class="cell after">
+        <div class="cell-label">Sonrası</div>
+        <p>Performans dalgalanmaları arttı. Ajans <span class="highlight">müşteriye eğitim vermek</span> zorunda: "kreatif yatırımını artır." Raporlama, kreatif strateji değerlendirmesine kaydı.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Stats -->
+  <div class="stat-strip">
+    <div class="stat-card">
+      <div class="stat-value">+8-10%</div>
+      <div class="stat-label">Doğru yapılandırılmış<br>kampanyalarda performans artışı</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">10.000x</div>
+      <div class="stat-label">Retrieval model<br>kompleksite artışı</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">8-15+</div>
+      <div class="stat-label">Kampanya başına gereken<br>farklı kreatif konsept</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">%89</div>
+      <div class="stat-label">Farklı motivasyonların<br>yeni kitle açma oranı</div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="tag">Kozmonot Perspektifi</div>
+    <h3>Karar Anları + Andromeda = Doğal Uyum</h3>
+    <p>Andromeda'nın "doğru mesajı doğru motivasyona eşleştir" mantığı, Kozmonot'un "karar anları" ve "medya mimarisi" yaklaşımıyla doğrudan örtüşüyor. Artık mesele kanal ve kitle seçimi değil, insanların karar anlarında doğru hikayeyi anlatmak. Operasyonel öncelik: kreatif üretim pipeline'ını hızlandırmak, CAPI entegrasyon kapasitesini müşterilere sunmak ve KOBİ/startup segmentinde kreatif çeşitliliğe ekstra yatırım yaparak düşük bütçe dezavantajını dengelemek.</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>Hazırlayan: Claude AI — Kozmonot için özel analiz</p>
+    <p class="sources">Kaynaklar: AdScale (Ara 2025) · The MTM Agency (Eki 2025) · Storyboard18 (Eki 2025) · Tyneside Marketing (Ara 2025) · StoreHero (Eki 2025) · Billo (Kas 2025) · Jon Loomer Digital (Ara 2025) · Medium/Yurenko (Eki 2025) · Expand Agency (Ara 2025) · Wonderkind (Kas 2025) · IMM Digital (2025) · Vaizle (Ara 2025)</p>
+  </div>
+
+</div>
+
+</body>
+</html>

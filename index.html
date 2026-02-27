@@ -36,7 +36,6 @@
     min-height: 100vh;
   }
 
-  /* Noise overlay */
   body::before {
     content: '';
     position: fixed;
@@ -53,7 +52,6 @@
     position: relative;
   }
 
-  /* Hero */
   .hero {
     text-align: center;
     padding: 60px 0 50px;
@@ -143,7 +141,6 @@
     letter-spacing: 0.5px;
   }
 
-  /* Legend */
   .legend {
     display: flex;
     justify-content: center;
@@ -169,7 +166,6 @@
   .legend-dot.before { background: var(--before-color); }
   .legend-dot.after { background: var(--after-color); }
 
-  /* Grid */
   .aspects-grid {
     display: flex;
     flex-direction: column;
@@ -280,43 +276,111 @@
   .cell.before .highlight { color: var(--before-color); }
   .cell.after .highlight { color: var(--after-color); }
 
-  /* Stat callouts */
-  .stat-strip {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2px;
-    background: var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-top: 40px;
+  /* Timeline */
+  .timeline-section {
+    margin-top: 48px;
     animation: fadeInUp 0.6s ease 0.6s both;
   }
 
-  .stat-card {
-    background: var(--bg-card);
-    padding: 28px 20px;
+  .timeline-header {
     text-align: center;
-    transition: background 0.3s ease;
+    margin-bottom: 40px;
   }
 
-  .stat-card:hover { background: var(--bg-card-hover); }
+  .timeline-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 4px;
+    padding: 4px 12px;
+    margin-bottom: 14px;
+  }
 
-  .stat-value {
+  .timeline-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 6px;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-primary);
   }
 
-  .stat-card:nth-child(1) .stat-value { color: var(--accent-cyan); }
-  .stat-card:nth-child(2) .stat-value { color: var(--accent-orange); }
-  .stat-card:nth-child(3) .stat-value { color: var(--accent-green); }
-  .stat-card:nth-child(4) .stat-value { color: var(--accent-purple); }
+  .timeline {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 12px;
+  }
 
-  .stat-label {
-    font-size: 12px;
+  .timeline-track {
+    position: absolute;
+    top: 22px;
+    left: 40px;
+    right: 40px;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+  }
+
+  .timeline-track::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 75%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-orange), var(--accent-cyan));
+    border-radius: 1px;
+  }
+
+  .timeline-node {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    padding: 0 4px;
+  }
+
+  .node-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin: 16px auto 14px;
+    position: relative;
+    border: 2px solid var(--bg-dark);
+  }
+
+  .node-dot.past { background: var(--text-muted); }
+  .node-dot.pilot { background: var(--accent-orange); box-shadow: 0 0 12px rgba(249, 115, 22, 0.4); }
+  .node-dot.now { background: var(--accent-cyan); box-shadow: 0 0 16px rgba(6, 182, 212, 0.5); animation: pulse 2s infinite; }
+  .node-dot.future { background: transparent; border: 2px dashed var(--text-muted); }
+
+  .timeline-node.active .node-year { color: var(--accent-cyan); }
+
+  .node-year {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
     color: var(--text-muted);
-    line-height: 1.5;
+    margin-bottom: 4px;
+  }
+
+  .node-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+  }
+
+  .node-desc {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-secondary);
   }
 
   /* Kozmonot CTA */
@@ -357,7 +421,6 @@
     margin-bottom: 14px;
   }
 
-  /* Footer */
   .footer {
     margin-top: 48px;
     padding-top: 24px;
@@ -379,7 +442,6 @@
     line-height: 1.8;
   }
 
-  /* Animations */
   @keyframes fadeInDown {
     from { opacity: 0; transform: translateY(-16px); }
     to { opacity: 1; transform: translateY(0); }
@@ -390,17 +452,44 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Responsive */
   @media (max-width: 768px) {
     .container { padding: 24px 16px 40px; }
     .hero { padding: 40px 0 36px; }
     .hero h1 { font-size: 28px; }
     .aspect-row { grid-template-columns: 1fr; }
-    .stat-strip { grid-template-columns: repeat(2, 1fr); }
     .meta-info { gap: 16px; }
     .legend { gap: 24px; }
     .cell { padding: 12px 18px 16px; }
     .aspect-header { padding: 14px 18px 6px; }
+    .timeline {
+      flex-direction: column;
+      gap: 0;
+      padding: 0;
+    }
+    .timeline-track {
+      top: 0;
+      bottom: 0;
+      left: 22px;
+      right: auto;
+      width: 2px;
+      height: auto;
+    }
+    .timeline-track::after {
+      width: 100%;
+      height: 75%;
+    }
+    .timeline-node {
+      text-align: left;
+      padding: 0 0 28px 52px;
+    }
+    .node-dot {
+      position: absolute;
+      left: 0;
+      top: 18px;
+      margin: 0;
+    }
+    .node-year { font-size: 20px; }
+    .timeline-title { font-size: 18px; }
   }
 </style>
 </head>
@@ -408,7 +497,6 @@
 
 <div class="container">
 
-  <!-- Hero -->
   <header class="hero">
     <div class="badge">Güncel Analiz — 2025</div>
     <h1>Meta <span class="gradient-text">Andromeda</span><br>Medya Ajansına Etkisi</h1>
@@ -420,7 +508,6 @@
     </div>
   </header>
 
-  <!-- Legend -->
   <div class="legend">
     <div class="legend-item">
       <div class="legend-dot before"></div>
@@ -432,10 +519,8 @@
     </div>
   </div>
 
-  <!-- Aspects -->
   <div class="aspects-grid">
 
-    <!-- 1 -->
     <div class="aspect-row">
       <div class="aspect-header">
         <span class="aspect-number">01</span>
@@ -452,7 +537,6 @@
       </div>
     </div>
 
-    <!-- 2 -->
     <div class="aspect-row">
       <div class="aspect-header">
         <span class="aspect-number">02</span>
@@ -469,7 +553,6 @@
       </div>
     </div>
 
-    <!-- 3 -->
     <div class="aspect-row">
       <div class="aspect-header">
         <span class="aspect-number">03</span>
@@ -486,7 +569,6 @@
       </div>
     </div>
 
-    <!-- 4 -->
     <div class="aspect-row">
       <div class="aspect-header">
         <span class="aspect-number">04</span>
@@ -503,7 +585,6 @@
       </div>
     </div>
 
-    <!-- 5 -->
     <div class="aspect-row">
       <div class="aspect-header">
         <span class="aspect-number">05</span>
@@ -520,7 +601,6 @@
       </div>
     </div>
 
-    <!-- 6 -->
     <div class="aspect-row">
       <div class="aspect-header">
         <span class="aspect-number">06</span>
@@ -537,7 +617,6 @@
       </div>
     </div>
 
-    <!-- 7 -->
     <div class="aspect-row">
       <div class="aspect-header">
         <span class="aspect-number">07</span>
@@ -554,7 +633,6 @@
       </div>
     </div>
 
-    <!-- 8 -->
     <div class="aspect-row">
       <div class="aspect-header">
         <span class="aspect-number">08</span>
@@ -571,7 +649,6 @@
       </div>
     </div>
 
-    <!-- 9 -->
     <div class="aspect-row">
       <div class="aspect-header">
         <span class="aspect-number">09</span>
@@ -588,7 +665,6 @@
       </div>
     </div>
 
-    <!-- 10 -->
     <div class="aspect-row">
       <div class="aspect-header">
         <span class="aspect-number">10</span>
@@ -607,23 +683,44 @@
 
   </div>
 
-  <!-- Stats -->
-  <div class="stat-strip">
-    <div class="stat-card">
-      <div class="stat-value">+8-10%</div>
-      <div class="stat-label">Doğru yapılandırılmış<br>kampanyalarda performans artışı</div>
+  <!-- Timeline -->
+  <div class="timeline-section">
+    <div class="timeline-header">
+      <span class="timeline-tag">Evrim Haritası</span>
+      <h3 class="timeline-title">Hedeflemeden Algoritmaya: Dönüşümün Zaman Çizelgesi</h3>
     </div>
-    <div class="stat-card">
-      <div class="stat-value">10.000x</div>
-      <div class="stat-label">Retrieval model<br>kompleksite artışı</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">8-15+</div>
-      <div class="stat-label">Kampanya başına gereken<br>farklı kreatif konsept</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">%89</div>
-      <div class="stat-label">Farklı motivasyonların<br>yeni kitle açma oranı</div>
+    <div class="timeline">
+      <div class="timeline-track"></div>
+      <div class="timeline-node">
+        <div class="node-dot past"></div>
+        <div class="node-year">2022</div>
+        <div class="node-label">Advantage+ Lansmanı</div>
+        <div class="node-desc">Meta ilk kez otomasyon öncelikli kampanya yapısını tanıttı. Manuel kontrol hâlâ baskındı, ama sinyal verilmişti: platform kendi kararlarını almak istiyor.</div>
+      </div>
+      <div class="timeline-node">
+        <div class="node-dot past"></div>
+        <div class="node-year">2023</div>
+        <div class="node-label">MTIA Çip Ailesi</div>
+        <div class="node-desc">Meta kendi yapay zeka çiplerini (MTIA) devreye aldı. Reklam dağıtım altyapısı NVIDIA Grace Hopper ile yeniden tasarlandı. Andromeda'nın donanım temeli atıldı.</div>
+      </div>
+      <div class="timeline-node">
+        <div class="node-dot pilot"></div>
+        <div class="node-year">2024</div>
+        <div class="node-label">Andromeda Pilot</div>
+        <div class="node-desc">Yeni retrieval engine sınırlı hesaplarda test edildi. Model kompleksitesi 10.000x arttı. İlk adaptörler %8-10 performans artışı raporladı. Eski sistem artık bottleneck.</div>
+      </div>
+      <div class="timeline-node active">
+        <div class="node-dot now"></div>
+        <div class="node-year">2025</div>
+        <div class="node-label">Global Rollout</div>
+        <div class="node-desc">Ekim 2025'te tüm pazarlara açıldı. Manuel hedefleme fiilen devre dışı. Kampanya başına 3-6 reklam dönemi bitti; 8-15+ farklı konsept yeni standart. Ajanslar adapte ol ya da geride kal noktasında.</div>
+      </div>
+      <div class="timeline-node">
+        <div class="node-dot future"></div>
+        <div class="node-year">2026</div>
+        <div class="node-label">Ne Bekleniyor?</div>
+        <div class="node-desc">Generative AI ile otomatik kreatif varyasyon üretimi. Ajansın rolü "kreatif üretici"den "kreatif orkestratör"e kayacak. Veri ekosistemi kalitesi, bütçeden daha belirleyici rekabet avantajı olacak.</div>
+      </div>
     </div>
   </div>
 
@@ -636,7 +733,6 @@
     <p>Sektörün büyük çoğunluğu hâlâ eski reflekslerle çalışıyor: dar kitleler, az kreatif, karmaşık yapılar. Andromeda bu yaklaşımı cezalandırıyor. Erken adapte olan ajanslar için bu bir tehdit değil, pazar payı kazanma fırsatı. Mesele artık medya satın almak değil, medya mimarisi kurmaktır.</p>
   </div>
 
-  <!-- Footer -->
   <div class="footer">
     <p>Hazırlayan: Kozmonot</p>
     <p class="sources">Kaynaklar: AdScale (Ara 2025) · The MTM Agency (Eki 2025) · Storyboard18 (Eki 2025) · Tyneside Marketing (Ara 2025) · StoreHero (Eki 2025) · Billo (Kas 2025) · Jon Loomer Digital (Ara 2025) · Medium/Yurenko (Eki 2025) · Expand Agency (Ara 2025) · Wonderkind (Kas 2025) · IMM Digital (2025) · Vaizle (Ara 2025)</p>

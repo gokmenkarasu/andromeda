@@ -368,7 +368,7 @@
       right: 0;
       height: 3px;
       border-radius: 999px;
-      background: linear-gradient(90deg, var(--before) 0%, #E87B3A 20%, #B0607A 40%, #7A7AAA 55%, var(--after) 80%, var(--after) 100%);
+      background: var(--after);
       z-index: 0;
     }
     .tItem{
@@ -393,10 +393,8 @@
       z-index: 2;
       flex: 0 0 auto;
     }
-    .tItem:nth-child(1) .tDot{ background: var(--before); box-shadow: 0 0 8px rgba(245,158,11,.5); }
-    .tItem:nth-child(3) .tDot{ background: #EF4444; box-shadow: 0 0 8px rgba(239,68,68,.5); }
-    .tItem:nth-child(4) .tDot{ background: var(--after); box-shadow: 0 0 8px rgba(34,211,238,.5); }
-    .tItem:nth-child(5) .tDot{ background: transparent; border: 2px dashed rgba(255,255,255,.35); box-shadow: none; }
+    .tItem .tDot{ background: var(--after); box-shadow: 0 0 8px rgba(34,211,238,.4); }
+    .tItem:nth-child(5) .tDot{ background: transparent; border: 2px dashed rgba(34,211,238,.4); box-shadow: none; }
     .tYear{
       font-size: 15px;
       color: var(--muted);
@@ -424,7 +422,7 @@
       .tRow::before{
         top: 0; bottom: 0; left: 7px; right: auto;
         width: 3px; height: 100%;
-        background: linear-gradient(180deg, var(--before) 0%, #E87B3A 20%, #B0607A 40%, #7A7AAA 55%, var(--after) 80%, var(--after) 100%);
+        background: var(--after);
       }
       .tItem{
         flex-direction: row;

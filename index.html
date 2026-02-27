@@ -349,57 +349,96 @@
       border: 1px solid var(--line);
       background: rgba(255,255,255,.03);
       border-radius: var(--radius2);
-      padding: 18px;
+      padding: 32px 18px 18px;
       box-shadow: var(--shadow);
+      overflow: hidden;
     }
     .tRow{
-      display:grid;
+      display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
+      gap: 0;
       position: relative;
-      margin-top: 12px;
     }
-    @media (max-width: 1100px){
-      .tRow{ grid-template-columns: 1fr; }
+    /* horizontal line behind dots */
+    .tRow::before{
+      content: "";
+      position: absolute;
+      top: 8px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--before), #EF4444 25%, rgba(255,255,255,.18) 40%, var(--after) 75%, var(--after));
+      z-index: 0;
     }
     .tItem{
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      border-radius: 18px;
-      padding: 14px 14px 12px;
+      border: none;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
       position: relative;
-      overflow:hidden;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
+    /* dot on the line */
+    .tDot{
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid var(--bg-0);
+      background: rgba(255,255,255,.45);
+      position: relative;
+      z-index: 2;
+      flex: 0 0 auto;
+    }
+    .tItem:nth-child(1) .tDot{ background: var(--before); box-shadow: 0 0 8px rgba(245,158,11,.5); }
+    .tItem:nth-child(3) .tDot{ background: #EF4444; box-shadow: 0 0 8px rgba(239,68,68,.5); }
+    .tItem:nth-child(4) .tDot{ background: var(--after); box-shadow: 0 0 8px rgba(34,211,238,.5); }
+    .tItem:nth-child(5) .tDot{ background: transparent; border: 2px dashed rgba(255,255,255,.35); box-shadow: none; }
     .tYear{
-      font-size: 13px;
+      font-size: 15px;
       color: var(--muted);
-      letter-spacing: .12em;
-      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 600;
+      margin-top: 14px;
     }
+    .tItem:nth-child(4) .tYear{ color: var(--text); font-weight: 700; font-size: 17px; }
     .tItem h3{
-      margin: 8px 0 6px;
-      font-size: 16px;
+      margin: 6px 0 4px;
+      font-size: 14px;
       letter-spacing: -0.01em;
+      font-weight: 600;
     }
     .tItem p{
-      margin:0;
-      color: rgba(255,255,255,.74);
-      font-size: 13px;
-      line-height: 1.55;
+      margin: 0;
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      line-height: 1.5;
+      max-width: 180px;
+      display: none;
     }
-    .tGlow{
-      position:absolute;
-      inset:-40% -60% auto auto;
-      width: 220px;
-      height: 220px;
-      border-radius: 999px;
-      filter: blur(20px);
-      opacity: .20;
-      pointer-events:none;
-      background: radial-gradient(circle at 30% 30%, var(--after), transparent 60%);
+    /* expand on hover */
+    .tItem:hover p{ display: block; }
+    .tGlow{ display: none; }
+    @media (max-width: 1100px){
+      .tRow{ grid-template-columns: 1fr; gap: 0; }
+      .tRow::before{
+        top: 0; bottom: 0; left: 7px; right: auto;
+        width: 3px; height: 100%;
+        background: linear-gradient(180deg, var(--before), #EF4444 25%, rgba(255,255,255,.18) 40%, var(--after) 75%, var(--after));
+      }
+      .tItem{
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 14px;
+        text-align: left;
+        padding: 12px 0;
+      }
+      .tDot{ margin-top: 2px; }
+      .tItem p{ display: block; max-width: none; }
     }
-    .tItem:nth-child(1) .tGlow{ background: radial-gradient(circle at 30% 30%, rgba(245,158,11,.9), transparent 60%); opacity:.16; }
-    .tItem:nth-child(4) .tGlow{ opacity:.18; }
     /* manifesto */
     .manifesto{
       border: 1px solid var(--line);
@@ -503,7 +542,7 @@
           </p>
           <div class="stickyNav" id="stickyNav" aria-label="Bölüm menüsü">
             <button class="navBtn active" data-target="#karsilastirma">10 Boyut</button>
-            <button class="navBtn" data-target="#evrim">Evrim Haritası</button>
+            <button class="navBtn" data-target="#evrim">Timeline</button>
             <button class="navBtn" data-target="#perspektif">Kozmonot Perspektifi</button>
             <button class="navBtn" data-target="#kaynaklar">Kaynaklar</button>
           </div>
@@ -783,37 +822,36 @@
     </section>
     <section id="evrim">
       <div class="secTitle">
-        <h2>Evrim Haritası</h2>
+        <h2>Timeline</h2>
       </div>
       <div class="timeline">
-        <div class="small">Okuma kolaylığı için her yıl: tek başlık + kısa açıklama. Daha fazlası gerekiyorsa genişletilebilir format eklenebilir.</div>
         <div class="tRow" role="list">
           <div class="tItem" role="listitem">
-            <div class="tGlow"></div>
+            <div class="tDot"></div>
             <div class="tYear">2022</div>
             <h3>Advantage+ Lansmanı</h3>
             <p>Meta ilk kez otomasyon öncelikli kampanya yapısını tanıttı. Manuel kontrol hâlâ baskındı, ama sinyal verilmişti: platform kendi kararlarını almak istiyor.</p>
           </div>
           <div class="tItem" role="listitem">
-            <div class="tGlow"></div>
+            <div class="tDot"></div>
             <div class="tYear">2023</div>
             <h3>MTIA Çip Ailesi</h3>
             <p>Meta kendi yapay zeka çiplerini (MTIA) devreye aldı. Reklam dağıtım altyapısı NVIDIA Grace Hopper ile yeniden tasarlandı. Andromeda'nın donanım temeli atıldı.</p>
           </div>
           <div class="tItem" role="listitem">
-            <div class="tGlow"></div>
+            <div class="tDot"></div>
             <div class="tYear">2024</div>
             <h3>Andromeda Pilot</h3>
             <p>Yeni retrieval engine sınırlı hesaplarda test edildi. Model kompleksitesi 10.000x arttı. İlk adaptörler %8-10 performans artışı raporladı. Eski sistem artık bottleneck.</p>
           </div>
           <div class="tItem" role="listitem">
-            <div class="tGlow"></div>
+            <div class="tDot"></div>
             <div class="tYear">2025</div>
             <h3>Global Rollout</h3>
             <p>Ekim 2025'te tüm pazarlara açıldı. Manuel hedefleme fiilen devre dışı. Kampanya başına 3-6 reklam dönemi bitti; 8-15+ farklı konsept yeni standart. Ajanslar adapte ol ya da geride kal noktasında.</p>
           </div>
           <div class="tItem" role="listitem">
-            <div class="tGlow"></div>
+            <div class="tDot"></div>
             <div class="tYear">2026</div>
             <h3>Ne Bekleniyor?</h3>
             <p>Generative AI ile otomatik kreatif varyasyon üretimi. Ajansın rolü "kreatif üretici"den "kreatif orkestratör"e kayacak. Veri ekosistemi kalitesi, bütçeden daha belirleyici rekabet avantajı olacak.</p>

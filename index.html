@@ -381,9 +381,21 @@
       top: 8px;
       left: 0;
       right: 0;
-      height: 3px;
+      height: 2px;
       border-radius: 999px;
-      background: var(--after);
+      background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,.3) 10%, var(--after) 50%, rgba(59,130,246,.3) 90%, transparent 100%);
+      z-index: 0;
+    }
+    .tRow::after{
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 5%;
+      right: 5%;
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,.15) 20%, rgba(59,130,246,.25) 50%, rgba(59,130,246,.15) 80%, transparent 100%);
+      filter: blur(6px);
       z-index: 0;
     }
     .tItem{
@@ -408,8 +420,17 @@
       z-index: 2;
       flex: 0 0 auto;
     }
-    .tItem .tDot{ background: var(--after); box-shadow: 0 0 8px rgba(59,130,246,.4); }
+    .tItem .tDot{
+      background: var(--after);
+      box-shadow: 0 0 8px rgba(59,130,246,.5), 0 0 20px rgba(59,130,246,.2);
+      transition: box-shadow .3s ease, transform .3s ease;
+    }
+    .tItem:hover .tDot{
+      box-shadow: 0 0 10px rgba(59,130,246,.7), 0 0 30px rgba(59,130,246,.3);
+      transform: scale(1.25);
+    }
     .tItem:nth-child(5) .tDot{ background: transparent; border: 2px dashed rgba(59,130,246,.35); box-shadow: none; }
+    .tItem:nth-child(5):hover .tDot{ box-shadow: 0 0 12px rgba(59,130,246,.25); }
     .tYear{
       font-size: 15px;
       color: var(--muted);

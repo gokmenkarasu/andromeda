@@ -1,744 +1,938 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meta Andromeda — Medya Ajansına Etkisi</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg-dark: #0a0e1a;
-    --bg-card: #111827;
-    --bg-card-hover: #1a2236;
-    --accent-blue: #3b82f6;
-    --accent-cyan: #06b6d4;
-    --accent-orange: #f97316;
-    --accent-red: #ef4444;
-    --accent-green: #10b981;
-    --accent-purple: #8b5cf6;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --border: #1e293b;
-    --before-color: #f97316;
-    --after-color: #06b6d4;
-    --glow-before: rgba(249, 115, 22, 0.15);
-    --glow-after: rgba(6, 182, 212, 0.15);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg-dark);
-    color: var(--text-primary);
-    font-family: 'DM Sans', sans-serif;
-    overflow-x: hidden;
-    min-height: 100vh;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 24px 60px;
-    position: relative;
-  }
-
-  .hero {
-    text-align: center;
-    padding: 60px 0 50px;
-    position: relative;
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, rgba(249, 115, 22, 0.05) 40%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.25);
-    border-radius: 100px;
-    padding: 8px 20px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--accent-blue);
-    margin-bottom: 28px;
-    animation: fadeInDown 0.8s ease;
-  }
-
-  .badge::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent-blue);
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  .hero h1 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(36px, 5vw, 56px);
-    font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 16px;
-    animation: fadeInDown 0.8s ease 0.1s both;
-  }
-
-  .hero h1 .gradient-text {
-    background: linear-gradient(135deg, var(--accent-orange), var(--accent-cyan));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .hero .subtitle {
-    font-size: 17px;
-    color: var(--text-secondary);
-    max-width: 640px;
-    margin: 0 auto 32px;
-    line-height: 1.6;
-    animation: fadeInDown 0.8s ease 0.2s both;
-  }
-
-  .hero .meta-info {
-    display: flex;
-    justify-content: center;
-    gap: 32px;
-    flex-wrap: wrap;
-    animation: fadeInDown 0.8s ease 0.3s both;
-  }
-
-  .meta-info span {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--text-muted);
-    letter-spacing: 0.5px;
-  }
-
-  .legend {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin-bottom: 48px;
-    animation: fadeInDown 0.8s ease 0.4s both;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    font-weight: 500;
-  }
-
-  .legend-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-  }
-
-  .legend-dot.before { background: var(--before-color); }
-  .legend-dot.after { background: var(--after-color); }
-
-  .aspects-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .aspect-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-    background: var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.6s ease forwards;
-    position: relative;
-  }
-
-  .aspect-row:nth-child(1) { animation-delay: 0.1s; }
-  .aspect-row:nth-child(2) { animation-delay: 0.15s; }
-  .aspect-row:nth-child(3) { animation-delay: 0.2s; }
-  .aspect-row:nth-child(4) { animation-delay: 0.25s; }
-  .aspect-row:nth-child(5) { animation-delay: 0.3s; }
-  .aspect-row:nth-child(6) { animation-delay: 0.35s; }
-  .aspect-row:nth-child(7) { animation-delay: 0.4s; }
-  .aspect-row:nth-child(8) { animation-delay: 0.45s; }
-  .aspect-row:nth-child(9) { animation-delay: 0.5s; }
-  .aspect-row:nth-child(10) { animation-delay: 0.55s; }
-
-  .aspect-row:hover .cell { background: var(--bg-card-hover); }
-
-  .aspect-header {
-    grid-column: 1 / -1;
-    background: var(--bg-card);
-    padding: 16px 24px 8px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  .aspect-number {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--accent-blue);
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    border-radius: 6px;
-    padding: 4px 10px;
-    flex-shrink: 0;
-  }
-
-  .aspect-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .aspect-icon {
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-
-  .cell {
-    background: var(--bg-card);
-    padding: 14px 24px 20px;
-    transition: background 0.3s ease;
-    position: relative;
-  }
-
-  .cell-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .cell.before .cell-label { color: var(--before-color); }
-  .cell.after .cell-label { color: var(--after-color); }
-
-  .cell-label::before {
-    content: '';
-    width: 8px;
-    height: 2px;
-    border-radius: 1px;
-  }
-
-  .cell.before .cell-label::before { background: var(--before-color); }
-  .cell.after .cell-label::before { background: var(--after-color); }
-
-  .cell p {
-    font-size: 13.5px;
-    line-height: 1.65;
-    color: var(--text-secondary);
-  }
-
-  .cell .highlight {
-    color: var(--text-primary);
-    font-weight: 500;
-  }
-
-  .cell.before .highlight { color: var(--before-color); }
-  .cell.after .highlight { color: var(--after-color); }
-
-  /* Timeline */
-  .timeline-section {
-    margin-top: 48px;
-    animation: fadeInUp 0.6s ease 0.6s both;
-  }
-
-  .timeline-header {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-
-  .timeline-tag {
-    display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--accent-cyan);
-    background: rgba(6, 182, 212, 0.1);
-    border: 1px solid rgba(6, 182, 212, 0.2);
-    border-radius: 4px;
-    padding: 4px 12px;
-    margin-bottom: 14px;
-  }
-
-  .timeline-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .timeline {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 0 12px;
-  }
-
-  .timeline-track {
-    position: absolute;
-    top: 22px;
-    left: 40px;
-    right: 40px;
-    height: 2px;
-    background: var(--border);
-    z-index: 0;
-  }
-
-  .timeline-track::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 75%;
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent-orange), var(--accent-cyan));
-    border-radius: 1px;
-  }
-
-  .timeline-node {
-    flex: 1;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-    padding: 0 4px;
-  }
-
-  .node-dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    margin: 16px auto 14px;
-    position: relative;
-    border: 2px solid var(--bg-dark);
-  }
-
-  .node-dot.past { background: var(--text-muted); }
-  .node-dot.pilot { background: var(--accent-orange); box-shadow: 0 0 12px rgba(249, 115, 22, 0.4); }
-  .node-dot.now { background: var(--accent-cyan); box-shadow: 0 0 16px rgba(6, 182, 212, 0.5); animation: pulse 2s infinite; }
-  .node-dot.future { background: transparent; border: 2px dashed var(--text-muted); }
-
-  .timeline-node.active .node-year { color: var(--accent-cyan); }
-
-  .node-year {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-  }
-
-  .node-label {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 10px;
-  }
-
-  .node-desc {
-    font-size: 12px;
-    line-height: 1.6;
-    color: var(--text-secondary);
-  }
-
-  /* Kozmonot CTA */
-  .cta-section {
-    margin-top: 40px;
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(249, 115, 22, 0.08));
-    border: 1px solid rgba(6, 182, 212, 0.15);
-    border-radius: 16px;
-    padding: 32px;
-    animation: fadeInUp 0.6s ease 0.7s both;
-  }
-
-  .cta-section h3 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: var(--text-primary);
-  }
-
-  .cta-section p {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--text-secondary);
-  }
-
-  .cta-section .tag {
-    display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--accent-cyan);
-    background: rgba(6, 182, 212, 0.1);
-    border: 1px solid rgba(6, 182, 212, 0.2);
-    border-radius: 4px;
-    padding: 3px 10px;
-    margin-bottom: 14px;
-  }
-
-  .footer {
-    margin-top: 48px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-    animation: fadeInUp 0.6s ease 0.8s both;
-  }
-
-  .footer p {
-    font-size: 11px;
-    color: var(--text-muted);
-    line-height: 1.8;
-  }
-
-  .footer .sources {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--text-muted);
-    margin-top: 8px;
-    line-height: 1.8;
-  }
-
-  @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @media (max-width: 768px) {
-    .container { padding: 24px 16px 40px; }
-    .hero { padding: 40px 0 36px; }
-    .hero h1 { font-size: 28px; }
-    .aspect-row { grid-template-columns: 1fr; }
-    .meta-info { gap: 16px; }
-    .legend { gap: 24px; }
-    .cell { padding: 12px 18px 16px; }
-    .aspect-header { padding: 14px 18px 6px; }
-    .timeline {
-      flex-direction: column;
-      gap: 0;
-      padding: 0;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Meta Andromeda - Medya Ajansına Etkisi</title>
+  <meta name="description" content="Meta'nın Andromeda güncellemesinin medya ajans modeline etkisi: 10 boyutlu karşılaştırma, evrim haritası ve Kozmonot perspektifi." />
+  <style>
+    :root{
+      --bg-0:#070A12;
+      --bg-1:#0A0F1F;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.085);
+      --line: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.86);
+      --muted: rgba(255,255,255,.62);
+      --faint: rgba(255,255,255,.45);
+      --before:#F59E0B;   /* orange */
+      --after:#22D3EE;    /* cyan */
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 24px;
+      --max: 1120px;
     }
-    .timeline-track {
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(900px 500px at 15% 15%, rgba(245,158,11,.10), transparent 55%),
+        radial-gradient(1200px 700px at 80% 25%, rgba(99,102,241,.09), transparent 55%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1));
+      letter-spacing: .2px;
+    }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width: var(--max); margin: 0 auto; padding: 28px 18px 80px; }
+    /* progress */
+    .progress{
+      position: fixed;
       top: 0;
-      bottom: 0;
-      left: 22px;
-      right: auto;
-      width: 2px;
-      height: auto;
-    }
-    .timeline-track::after {
-      width: 100%;
-      height: 75%;
-    }
-    .timeline-node {
-      text-align: left;
-      padding: 0 0 28px 52px;
-    }
-    .node-dot {
-      position: absolute;
       left: 0;
-      top: 18px;
-      margin: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--after), var(--before));
+      z-index: 1000;
+      box-shadow: 0 6px 18px rgba(0,0,0,.35);
     }
-    .node-year { font-size: 20px; }
-    .timeline-title { font-size: 18px; }
-  }
-</style>
+    /* header */
+    header{
+      padding: 24px 0 18px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+    }
+    .dot{
+      width:7px; height:7px; border-radius:999px;
+      background: var(--after);
+      box-shadow: 0 0 0 4px rgba(34,211,238,.12);
+    }
+    .hero{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 22px;
+      margin-top: 18px;
+      align-items: start;
+    }
+    @media (max-width: 900px){
+      .hero{ grid-template-columns: 1fr; }
+    }
+    h1{
+      margin: 12px 0 8px;
+      font-size: clamp(34px, 4vw, 54px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .subh{
+      font-size: clamp(18px, 2vw, 22px);
+      color: var(--muted);
+      margin: 0 0 18px;
+      line-height: 1.45;
+    }
+    .heroCard{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border-radius: var(--radius2);
+      padding: 18px 18px 14px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .metaRow{
+      display:flex;
+      flex-wrap: wrap;
+      gap:10px;
+      margin-top: 12px;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.035);
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .tag b{
+      color: var(--text);
+      font-weight: 650;
+    }
+    .quick{
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      display:grid;
+      gap:10px;
+    }
+    .quickItem{
+      display:flex;
+      gap:10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .bullet{
+      width: 8px; height: 8px;
+      border-radius: 999px;
+      margin-top: 7px;
+      background: rgba(255,255,255,.22);
+    }
+    /* sticky nav */
+    .stickyNav{
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      margin: 18px 0 0;
+      border: 1px solid var(--line);
+      background: rgba(10,15,31,.55);
+      backdrop-filter: blur(10px);
+      border-radius: 999px;
+      padding: 8px;
+      display:flex;
+      gap:8px;
+      overflow:auto;
+      box-shadow: 0 14px 46px rgba(0,0,0,.35);
+    }
+    .navBtn{
+      flex: 0 0 auto;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-size: 13px;
+      transition: .2s ease;
+      background: transparent;
+      cursor:pointer;
+    }
+    .navBtn:hover{
+      color: var(--text);
+      border-color: rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+    }
+    .navBtn.active{
+      color: var(--text);
+      border-color: rgba(34,211,238,.28);
+      background: rgba(34,211,238,.08);
+    }
+    /* sections */
+    section{ margin-top: 34px; scroll-margin-top: 90px; }
+    .secTitle{
+      display:flex;
+      align-items: baseline;
+      gap:12px;
+      margin: 0 0 10px;
+    }
+    .secTitle h2{
+      margin:0;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+    }
+    .secTitle p{
+      margin:0;
+      color: var(--faint);
+      font-size: 13px;
+    }
+    /* accordion compare */
+    .panel{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius2);
+      overflow: hidden;
+      box-shadow: 0 16px 55px rgba(0,0,0,.35);
+    }
+    details{
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    details:first-child{
+      border-top: 0;
+    }
+    summary{
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 18px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 14px;
+      background: rgba(255,255,255,.02);
+    }
+    summary::-webkit-details-marker{ display:none; }
+    .sumLeft{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 0;
+    }
+    .num{
+      width: 34px; height: 34px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 13px;
+      flex: 0 0 auto;
+    }
+    .sumText{
+      min-width: 0;
+    }
+    .sumText b{
+      display:block;
+      font-size: 15px;
+      color: var(--text);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 3px;
+    }
+    .sumText span{
+      display:block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 720px;
+    }
+    @media (max-width: 900px){
+      .sumText span{ max-width: 520px; }
+    }
+    @media (max-width: 560px){
+      .sumText span{ max-width: 280px; }
+    }
+    .chev{
+      width: 34px; height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: var(--muted);
+      flex: 0 0 auto;
+      transition: transform .2s ease;
+      background: rgba(255,255,255,.03);
+    }
+    details[open] .chev{ transform: rotate(180deg); }
+    .content{
+      padding: 14px 18px 18px;
+      background: rgba(0,0,0,.14);
+    }
+    .compare{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 850px){
+      .compare{ grid-template-columns: 1fr; }
+    }
+    .box{
+      border-radius: var(--radius);
+      padding: 14px 14px 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .kicker{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap:10px;
+      margin-bottom: 8px;
+    }
+    .kicker .label{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .bar{
+      width: 64px;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      overflow:hidden;
+      flex: 0 0 auto;
+    }
+    .bar::after{
+      content:"";
+      display:block;
+      height:100%;
+      width:100%;
+      transform: translateX(-35%);
+    }
+    .before .bar::after{ background: linear-gradient(90deg, var(--before), transparent); }
+    .after  .bar::after{ background: linear-gradient(90deg, var(--after), transparent); }
+    .box p{
+      margin:0;
+      color: rgba(255,255,255,.78);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+    .mut{
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 10px;
+      line-height: 1.55;
+    }
+    /* timeline */
+    .timeline{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius2);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .tRow{
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      position: relative;
+      margin-top: 12px;
+    }
+    @media (max-width: 1100px){
+      .tRow{ grid-template-columns: 1fr; }
+    }
+    .tItem{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      position: relative;
+      overflow:hidden;
+    }
+    .tYear{
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .tItem h3{
+      margin: 8px 0 6px;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+    .tItem p{
+      margin:0;
+      color: rgba(255,255,255,.74);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .tGlow{
+      position:absolute;
+      inset:-40% -60% auto auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      filter: blur(20px);
+      opacity: .20;
+      pointer-events:none;
+      background: radial-gradient(circle at 30% 30%, var(--after), transparent 60%);
+    }
+    .tItem:nth-child(1) .tGlow{ background: radial-gradient(circle at 30% 30%, rgba(245,158,11,.9), transparent 60%); opacity:.16; }
+    .tItem:nth-child(4) .tGlow{ opacity:.18; }
+    /* manifesto */
+    .manifesto{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: var(--radius2);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .mfHead{
+      display:flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .mfBadge{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(34,211,238,.24);
+      background: rgba(34,211,238,.08);
+      color: rgba(255,255,255,.78);
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .mfTitle{
+      margin: 8px 0 10px;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+    .mfGrid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 980px){
+      .mfGrid{ grid-template-columns: 1fr; }
+    }
+    .mfCard{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .mfCard b{
+      display:block;
+      font-size: 13px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .mfCard p{
+      margin:0;
+      color: rgba(255,255,255,.76);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .footer{
+      margin-top: 34px;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.6;
+    }
+    .sep{
+      margin: 22px 0 10px;
+      height: 1px;
+      background: rgba(255,255,255,.10);
+    }
+    .small{
+      font-size: 12px;
+      color: var(--faint);
+    }
+    /* helper */
+    .kbd{
+      font-size: 12px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-bottom-color: rgba(255,255,255,.09);
+      border-radius: 10px;
+      color: var(--muted);
+      background: rgba(255,255,255,.03);
+    }
+  </style>
 </head>
 <body>
-
-<div class="container">
-
-  <header class="hero">
-    <div class="badge">Güncel Analiz — 2025</div>
-    <h1>Meta <span class="gradient-text">Andromeda</span><br>Medya Ajansına Etkisi</h1>
-    <p class="subtitle">Meta'nın reklam dağıtım motorunu sıfırdan yeniden inşa ettiği Andromeda güncellemesi, medya ajanslarının iş yapış biçimini 10 kritik boyutta dönüştürüyor.</p>
-    <div class="meta-info">
-      <span>📅 Global Rollout: Ekim 2025</span>
-      <span>⚙️ AI-Driven Retrieval Engine</span>
-      <span>📊 10 Boyutlu Karşılaştırma</span>
-    </div>
-  </header>
-
-  <div class="legend">
-    <div class="legend-item">
-      <div class="legend-dot before"></div>
-      <span style="color: var(--before-color);">Öncesi</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot after"></div>
-      <span style="color: var(--after-color);">Sonrası</span>
-    </div>
+  <div class="progress" id="progress"></div>
+  <div class="wrap">
+    <header>
+      <span class="pill"><span class="dot"></span> Güncel Analiz - 2025</span>
+      <div class="hero" id="top">
+        <div>
+          <h1>Meta Andromeda<br/>Medya Ajansına Etkisi</h1>
+          <p class="subh">
+            Meta'nın reklam dağıtım motorunu sıfırdan yeniden inşa ettiği Andromeda güncellemesi,
+            medya ajanslarının iş yapış biçimini 10 kritik boyutta dönüştürüyor.
+          </p>
+          <div class="stickyNav" id="stickyNav" aria-label="Bölüm menüsü">
+            <button class="navBtn active" data-target="#karsilastirma">10 Boyut</button>
+            <button class="navBtn" data-target="#evrim">Evrim Haritası</button>
+            <button class="navBtn" data-target="#perspektif">Kozmonot Perspektifi</button>
+            <button class="navBtn" data-target="#kaynaklar">Kaynaklar</button>
+          </div>
+        </div>
+        <aside class="heroCard">
+          <div class="metaRow">
+            <div class="tag"><b>Global Rollout</b>: Ekim 2025</div>
+            <div class="tag"><b>Engine</b>: AI-Driven Retrieval</div>
+            <div class="tag"><b>Format</b>: 10 Boyutlu Karşılaştırma</div>
+          </div>
+          <div class="quick" aria-label="Hızlı özet">
+            <div class="quickItem"><span class="bullet"></span><span>Eski avantaj hedefleme ve karmaşık yapıydı. Yeni avantaj kreatif çeşitlilik + veri hijyeni + öğrenme hızı.</span></div>
+            <div class="quickItem"><span class="bullet"></span><span>Attribution bulanıklaşıyor. Raporlama kreatif strateji ve sinyal kalitesine kayıyor.</span></div>
+            <div class="quickItem"><span class="bullet"></span><span>Ajans rolü media buying'den creative engineering'e evriliyor.</span></div>
+          </div>
+          <div class="sep"></div>
+          <div class="small">İpucu: Bölüm menüsünden hızlı gez, her başlık açılır-kapanır. <span class="kbd">Esc</span> ile kapatabilirsin.</div>
+        </aside>
+      </div>
+    </header>
+    <section id="karsilastirma">
+      <div class="secTitle">
+        <h2>10 Boyutlu Karşılaştırma</h2>
+        <p>Öncesi vs Sonrası - taranabilir, açılır detay</p>
+      </div>
+      <div class="panel" role="region" aria-label="10 boyutlu karşılaştırma paneli">
+        <!-- 01 -->
+        <details open>
+          <summary>
+            <div class="sumLeft">
+              <div class="num">01</div>
+              <div class="sumText">
+                <b>Hedefleme Yaklaşımı</b>
+                <span>Hedefleme uzmanlığı avantajdı. Şimdi broad norm, dar kitle performansı düşürüyor.</span>
+              </div>
+            </div>
+            <div class="chev" aria-hidden="true">⌄</div>
+          </summary>
+          <div class="content">
+            <div class="compare">
+              <div class="box before">
+                <div class="kicker"><span class="label">Öncesi</span><span class="bar"></span></div>
+                <p>Manuel kitle segmentasyonu: ilgi alanları, davranışlar, demografi ve lookalike'lar titizlikle kurgulanırdı. Ajansın "hedefleme uzmanlığı" temel rekabet avantajıydı.</p>
+              </div>
+              <div class="box after">
+                <div class="kicker"><span class="label">Sonrası</span><span class="bar"></span></div>
+                <p>Broad targeting norm oldu. Algoritma kullanıcı bazında gerçek zamanlı karar veriyor. Dar kitleler performansı düşürüyor. Ajansın hedefleme kurma işi fiilen ortadan kalktı.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+        <!-- 02 -->
+        <details>
+          <summary>
+            <div class="sumLeft">
+              <div class="num">02</div>
+              <div class="sumText">
+                <b>Kreatif Üretim Hacmi</b>
+                <span>3-6 reklamlardan 8-15+ gerçekten farklı konsepte geçiş.</span>
+              </div>
+            </div>
+            <div class="chev" aria-hidden="true">⌄</div>
+          </summary>
+          <div class="content">
+            <div class="compare">
+              <div class="box before">
+                <div class="kicker"><span class="label">Öncesi</span><span class="bar"></span></div>
+                <p>Kampanya başına 3-6 reklam yeterliydi. Bir "kazanan" reklam bulunup bütçe oraya yığılırdı. Küçük varyasyonlar farklı reklam sayılırdı.</p>
+                <div class="mut">Problem: Sistem benzerleri ayırabiliyordu, küçük değişiklikler işe yarıyordu.</div>
+              </div>
+              <div class="box after">
+                <div class="kicker"><span class="label">Sonrası</span><span class="bar"></span></div>
+                <p>Kampanya başına 8-15+ gerçekten farklı konsept gerekiyor. Sistem visual pattern-matching yapıyor; benzer setup'lar aynı reklam olarak gruplandırılıyor.</p>
+                <div class="mut">Sonuç: Kreatif çeşitlilik "ölçek" değil, "giriş bileti" oldu.</div>
+              </div>
+            </div>
+          </div>
+        </details>
+        <!-- 03 -->
+        <details>
+          <summary>
+            <div class="sumLeft">
+              <div class="num">03</div>
+              <div class="sumText">
+                <b>Ajans Değer Önerisi</b>
+                <span>Media buying değil, creative engineering + veri mimarisi.</span>
+              </div>
+            </div>
+            <div class="chev" aria-hidden="true">⌄</div>
+          </summary>
+          <div class="content">
+            <div class="compare">
+              <div class="box before">
+                <div class="kicker"><span class="label">Öncesi</span><span class="bar"></span></div>
+                <p>"Doğru kitleyi bulma" ve kampanya yapısını optimize etme becerisine dayanıyordu. Media buying uzmanlığı ön plandaydı.</p>
+              </div>
+              <div class="box after">
+                <div class="kicker"><span class="label">Sonrası</span><span class="bar"></span></div>
+                <p>Değer önerisi "creative engineering"e kaydı. Stratejik değer: analitik, kreatif çeşitlilik ve veri mimarisi üçgeninde. Beklenti "algoritma besleyen ekosistem kur"a dönüştü.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+        <!-- 04 -->
+        <details>
+          <summary>
+            <div class="sumLeft">
+              <div class="num">04</div>
+              <div class="sumText">
+                <b>Kampanya Yapısı</b>
+                <span>Karmaşıklık değil, sadeleşme ve öğrenme hızı.</span>
+              </div>
+            </div>
+            <div class="chev" aria-hidden="true">⌄</div>
+          </summary>
+          <div class="content">
+            <div class="compare">
+              <div class="box before">
+                <div class="kicker"><span class="label">Öncesi</span><span class="bar"></span></div>
+                <p>Çok sayıda ad set, segmentlere özel kampanyalar, karmaşık funnel yapıları. Yapısal kompleksite bir uzmanlık göstergesiydi.</p>
+              </div>
+              <div class="box after">
+                <div class="kicker"><span class="label">Sonrası</span><span class="bar"></span></div>
+                <p>Sadeleşme zorunlu. Daha az kampanya, daha az ad set, daha geniş hedefleme. Karmaşık yapılar algoritmanın öğrenme hızını kısıtlıyor.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+        <!-- 05 -->
+        <details>
+          <summary>
+            <div class="sumLeft">
+              <div class="num">05</div>
+              <div class="sumText">
+                <b>Bütçe Dağılımı ve Maliyet</b>
+                <span>Küçük bütçede volatilite artıyor, büyük bütçe öğrenmeyi hızlandırıyor.</span>
+              </div>
+            </div>
+            <div class="chev" aria-hidden="true">⌄</div>
+          </summary>
+          <div class="content">
+            <div class="compare">
+              <div class="box before">
+                <div class="kicker"><span class="label">Öncesi</span><span class="bar"></span></div>
+                <p>Bütçe kontrolü nispeten öngörülebilirdi. Küçük bütçeler bile niş hedeflemeyle sonuç alabilirdi.</p>
+              </div>
+              <div class="box after">
+                <div class="kicker"><span class="label">Sonrası</span><span class="bar"></span></div>
+                <p>Büyük bütçeler avantajlı; sistem yüksek data hacmiyle daha iyi öğreniyor. Küçük markaların CPA'sı yükseldi, performans volatilitesi arttı.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+        <!-- 06 -->
+        <details>
+          <summary>
+            <div class="sumLeft">
+              <div class="num">06</div>
+              <div class="sumText">
+                <b>Ölçümleme ve Raporlama</b>
+                <span>Attribution bulanıklaşıyor, yeni metrikler kreatife kayıyor.</span>
+              </div>
+            </div>
+            <div class="chev" aria-hidden="true">⌄</div>
+          </summary>
+          <div class="content">
+            <div class="compare">
+              <div class="box before">
+                <div class="kicker"><span class="label">Öncesi</span><span class="bar"></span></div>
+                <p>Attribution nispeten anlaşılırdı. Hangi kitle, hangi reklam, ne sonuç verdi takip edilebilirdi.</p>
+              </div>
+              <div class="box after">
+                <div class="kicker"><span class="label">Sonrası</span><span class="bar"></span></div>
+                <p>Attribution bulanıklaştı. Conversion lag arttı, ROI takibi karmaşıklaştı. Creative Similarity Report ve creative fatigue metrikleri kritik hale geldi.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+        <!-- 07 -->
+        <details>
+          <summary>
+            <div class="sumLeft">
+              <div class="num">07</div>
+              <div class="sumText">
+                <b>Ekip Yetkinlikleri</b>
+                <span>Media buyer yerine creative strategist + data analyst profili.</span>
+              </div>
+            </div>
+            <div class="chev" aria-hidden="true">⌄</div>
+          </summary>
+          <div class="content">
+            <div class="compare">
+              <div class="box before">
+                <div class="kicker"><span class="label">Öncesi</span><span class="bar"></span></div>
+                <p>Media buyer profili: platform bilgisi, bid stratejisi, kitle araştırması, A/B test kurgusu.</p>
+              </div>
+              <div class="box after">
+                <div class="kicker"><span class="label">Sonrası</span><span class="bar"></span></div>
+                <p>Creative strategist + data analyst profili ön planda. UGC üretim kapasitesi, kreatif pipeline hızı ve CAPI/data hygiene bilgisi belirleyici.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+        <!-- 08 -->
+        <details>
+          <summary>
+            <div class="sumLeft">
+              <div class="num">08</div>
+              <div class="sumText">
+                <b>Veri Bağımlılığı</b>
+                <span>Pixel yeterli değil. CAPI, EMQ, deduplication kritik.</span>
+              </div>
+            </div>
+            <div class="chev" aria-hidden="true">⌄</div>
+          </summary>
+          <div class="content">
+            <div class="compare">
+              <div class="box before">
+                <div class="kicker"><span class="label">Öncesi</span><span class="bar"></span></div>
+                <p>Pixel verisi ve platform içi sinyaller yeterliydi. First-party data "nice to have" konumundaydı.</p>
+              </div>
+              <div class="box after">
+                <div class="kicker"><span class="label">Sonrası</span><span class="bar"></span></div>
+                <p>CAPI entegrasyonu zorunlu. Event Match Quality, deduplication ve first-party data kalitesi kritik. Meta'ya veri bağımlılığı derinleşiyor.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+        <!-- 09 -->
+        <details>
+          <summary>
+            <div class="sumLeft">
+              <div class="num">09</div>
+              <div class="sumText">
+                <b>Rekabet Dinamikleri</b>
+                <span>Kreatif kalite eleme kriteri. Zayıf kreatif auction'a giremiyor.</span>
+              </div>
+            </div>
+            <div class="chev" aria-hidden="true">⌄</div>
+          </summary>
+          <div class="content">
+            <div class="compare">
+              <div class="box before">
+                <div class="kicker"><span class="label">Öncesi</span><span class="bar"></span></div>
+                <p>İyi hedefleme yapan ajans, zayıf kreatifle bile sonuç alabilirdi. Teknik kampanya yönetimi farklılaştırıcıydı.</p>
+              </div>
+              <div class="box after">
+                <div class="kicker"><span class="label">Sonrası</span><span class="bar"></span></div>
+                <p>Kreatif kalitesi "eleme kriteri" oldu. Zayıf kreatif auction'a bile giremiyor. Rekabet "kim daha iyi hikaye anlatır" üzerinden şekilleniyor.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+        <!-- 10 -->
+        <details>
+          <summary>
+            <div class="sumLeft">
+              <div class="num">10</div>
+              <div class="sumText">
+                <b>Müşteri İlişkisi ve Beklenti Yönetimi</b>
+                <span>Net metriklerden eğitim ve strateji odaklı yönetime kayış.</span>
+              </div>
+            </div>
+            <div class="chev" aria-hidden="true">⌄</div>
+          </summary>
+          <div class="content">
+            <div class="compare">
+              <div class="box before">
+                <div class="kicker"><span class="label">Öncesi</span><span class="bar"></span></div>
+                <p>"Bu ay CPA'yı %15 düşürdük" gibi net metriklerle raporlama yapılabiliyordu. Performans nispeten stabil, güven kolaydı.</p>
+              </div>
+              <div class="box after">
+                <div class="kicker"><span class="label">Sonrası</span><span class="bar"></span></div>
+                <p>Performans dalgalanmaları arttı. Ajans müşteriye eğitim vermek zorunda: "kreatif yatırımını artır." Raporlama, kreatif strateji değerlendirmesine kaydı.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section id="evrim">
+      <div class="secTitle">
+        <h2>Evrim Haritası</h2>
+        <p>Hedeflemeden algoritmaya - dönüşümün zaman çizelgesi</p>
+      </div>
+      <div class="timeline">
+        <div class="small">Okuma kolaylığı için her yıl: tek başlık + kısa açıklama. Daha fazlası gerekiyorsa genişletilebilir format eklenebilir.</div>
+        <div class="tRow" role="list">
+          <div class="tItem" role="listitem">
+            <div class="tGlow"></div>
+            <div class="tYear">2022</div>
+            <h3>Advantage+ Lansmanı</h3>
+            <p>Meta ilk kez otomasyon öncelikli kampanya yapısını tanıttı. Manuel kontrol hâlâ baskındı, ama sinyal verilmişti: platform kendi kararlarını almak istiyor.</p>
+          </div>
+          <div class="tItem" role="listitem">
+            <div class="tGlow"></div>
+            <div class="tYear">2023</div>
+            <h3>MTIA Çip Ailesi</h3>
+            <p>Meta kendi yapay zeka çiplerini (MTIA) devreye aldı. Reklam dağıtım altyapısı NVIDIA Grace Hopper ile yeniden tasarlandı. Andromeda'nın donanım temeli atıldı.</p>
+          </div>
+          <div class="tItem" role="listitem">
+            <div class="tGlow"></div>
+            <div class="tYear">2024</div>
+            <h3>Andromeda Pilot</h3>
+            <p>Yeni retrieval engine sınırlı hesaplarda test edildi. Model kompleksitesi 10.000x arttı. İlk adaptörler %8-10 performans artışı raporladı. Eski sistem artık bottleneck.</p>
+          </div>
+          <div class="tItem" role="listitem">
+            <div class="tGlow"></div>
+            <div class="tYear">2025</div>
+            <h3>Global Rollout</h3>
+            <p>Ekim 2025'te tüm pazarlara açıldı. Manuel hedefleme fiilen devre dışı. Kampanya başına 3-6 reklam dönemi bitti; 8-15+ farklı konsept yeni standart. Ajanslar adapte ol ya da geride kal noktasında.</p>
+          </div>
+          <div class="tItem" role="listitem">
+            <div class="tGlow"></div>
+            <div class="tYear">2026</div>
+            <h3>Ne Bekleniyor?</h3>
+            <p>Generative AI ile otomatik kreatif varyasyon üretimi. Ajansın rolü "kreatif üretici"den "kreatif orkestratör"e kayacak. Veri ekosistemi kalitesi, bütçeden daha belirleyici rekabet avantajı olacak.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="perspektif">
+      <div class="secTitle">
+        <h2>Kozmonot Perspektifi</h2>
+        <p>Executive manifesto formatı: kısa, net, açılır detay</p>
+      </div>
+      <div class="manifesto">
+        <div class="mfHead">
+          <span class="mfBadge">Kozmonot Perspektifi</span>
+        </div>
+        <div class="mfTitle">Medya Ajansı Artık Bir "Kreatif Sinyal Mimarı"dır</div>
+        <div class="mfGrid">
+          <div class="mfCard">
+            <b>Reality</b>
+            <p>Hedefleme uzmanlığına dayanan ajans modeli artık bir commodity. Platform, makine zekasını manuel kararların üzerine koydu.</p>
+          </div>
+          <div class="mfCard">
+            <b>Shift</b>
+            <p>Kazanan ajans en iyi kitleyi bulan değil, algoritmayı en iyi besleyen: kreatif çeşitlilik + veri hijyeni + sinyal kalitesi.</p>
+          </div>
+          <div class="mfCard">
+            <b>Opportunity</b>
+            <p>Dar kitle, az kreatif, karmaşık yapı cezalandırılıyor. Erken adapte olan ajanslar için bu pazar payı kazanma fırsatı.</p>
+          </div>
+        </div>
+        <div style="margin-top:14px;">
+          <details>
+            <summary>
+              <div class="sumLeft">
+                <div class="num">+</div>
+                <div class="sumText">
+                  <b>Detayı Aç</b>
+                  <span>Tam perspektif metni (orijinal içerik)</span>
+                </div>
+              </div>
+              <div class="chev" aria-hidden="true">⌄</div>
+            </summary>
+            <div class="content">
+              <p style="margin:0 0 12px; color: rgba(255,255,255,.78); line-height:1.7; font-size:14px;">
+                Andromeda, medya sektöründe 20 yıldır süren bir dönemin kapanış bildirisidir. Hedefleme uzmanlığına dayanan ajans modeli artık bir commodity.
+                Platform, kendi makine zekasını reklamverenin manuel kararlarının üzerine koydu. Bu, ajansların değersizleşmesi değil; değer üretim noktasının radikal biçimde yer değiştirmesidir.
+              </p>
+              <p style="margin:0 0 12px; color: rgba(255,255,255,.78); line-height:1.7; font-size:14px;">
+                Bundan sonra kazanan ajans, en iyi kitleyi bulan değil, algoritmayı en iyi besleyen olacak. Bu da üç şey demek:
+                birincisi, insanların farklı karar anlarına hitap eden kreatif çeşitlilik üretme kapasitesi.
+                İkincisi, platformun öğrenme döngüsünü hızlandıracak veri hijyeni ve sinyal kalitesi.
+                Üçüncüsü, müşteriyle ilişkiyi "kampanya yönetimi" seviyesinden "büyüme mühendisliği" seviyesine taşıyacak stratejik derinlik.
+              </p>
+              <p style="margin:0; color: rgba(255,255,255,.78); line-height:1.7; font-size:14px;">
+                Sektörün büyük çoğunluğu hâlâ eski reflekslerle çalışıyor: dar kitleler, az kreatif, karmaşık yapılar. Andromeda bu yaklaşımı cezalandırıyor.
+                Erken adapte olan ajanslar için bu bir tehdit değil, pazar payı kazanma fırsatı. Mesele artık medya satın almak değil, medya mimarisi kurmaktır.
+              </p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+    <section id="kaynaklar">
+      <div class="secTitle">
+        <h2>Notlar</h2>
+        <p>Şeffaflık ve otorite</p>
+      </div>
+      <div class="footer">
+        <div><b>Hazırlayan:</b> Kozmonot</div>
+        <div class="sep"></div>
+        <div><b>Kaynaklar:</b> AdScale (Ara 2025) · The MTM Agency (Eki 2025) · Storyboard18 (Eki 2025) · Tyneside Marketing (Ara 2025) · StoreHero (Eki 2025) · Billo (Kas 2025) · Jon Loomer Digital (Ara 2025) · Medium/Yurenko (Eki 2025) · Expand Agency (Ara 2025) · Wonderkind (Kas 2025) · IMM Digital (2025) · Vaizle (Ara 2025)</div>
+        <div class="sep"></div>
+        <div class="small">Bu sayfa statik HTML olarak tasarlandı. İstersen bir sonraki adımda CTA, lead form ve PDF export eklenebilir.</div>
+      </div>
+    </section>
   </div>
-
-  <div class="aspects-grid">
-
-    <div class="aspect-row">
-      <div class="aspect-header">
-        <span class="aspect-number">01</span>
-        <span class="aspect-icon">🎯</span>
-        <span class="aspect-title">Hedefleme Yaklaşımı</span>
-      </div>
-      <div class="cell before">
-        <div class="cell-label">Öncesi</div>
-        <p>Manuel kitle segmentasyonu: ilgi alanları, davranışlar, demografi ve lookalike'lar <span class="highlight">titizlikle kurgulanırdı.</span> Ajansın "hedefleme uzmanlığı" temel rekabet avantajıydı.</p>
-      </div>
-      <div class="cell after">
-        <div class="cell-label">Sonrası</div>
-        <p><span class="highlight">Broad targeting norm oldu.</span> Algoritma kullanıcı bazında gerçek zamanlı karar veriyor. Dar kitleler performansı düşürüyor. Ajansın hedefleme kurma işi fiilen ortadan kalktı.</p>
-      </div>
-    </div>
-
-    <div class="aspect-row">
-      <div class="aspect-header">
-        <span class="aspect-number">02</span>
-        <span class="aspect-icon">🎨</span>
-        <span class="aspect-title">Kreatif Üretim Hacmi</span>
-      </div>
-      <div class="cell before">
-        <div class="cell-label">Öncesi</div>
-        <p>Kampanya başına <span class="highlight">3-6 reklam</span> yeterliydi. Bir "kazanan" reklam bulunup bütçe oraya yığılırdı. Küçük varyasyonlar farklı reklam sayılırdı.</p>
-      </div>
-      <div class="cell after">
-        <div class="cell-label">Sonrası</div>
-        <p>Kampanya başına <span class="highlight">8-15+ gerçekten farklı konsept</span> gerekiyor. Sistem visual pattern-matching yapıyor; benzer setup'lar aynı reklam olarak gruplandırılıyor.</p>
-      </div>
-    </div>
-
-    <div class="aspect-row">
-      <div class="aspect-header">
-        <span class="aspect-number">03</span>
-        <span class="aspect-icon">💎</span>
-        <span class="aspect-title">Ajans Değer Önerisi</span>
-      </div>
-      <div class="cell before">
-        <div class="cell-label">Öncesi</div>
-        <p>"Doğru kitleyi bulma" ve kampanya yapısını optimize etme becerisine dayanıyordu. <span class="highlight">Media buying uzmanlığı</span> ön plandaydı.</p>
-      </div>
-      <div class="cell after">
-        <div class="cell-label">Sonrası</div>
-        <p>Değer önerisi <span class="highlight">"creative engineering"e</span> kaydı. Stratejik değer: analitik, kreatif çeşitlilik ve veri mimarisi üçgeninde. Beklenti "algoritma besleyen ekosistem kur"a dönüştü.</p>
-      </div>
-    </div>
-
-    <div class="aspect-row">
-      <div class="aspect-header">
-        <span class="aspect-number">04</span>
-        <span class="aspect-icon">🏗️</span>
-        <span class="aspect-title">Kampanya Yapısı</span>
-      </div>
-      <div class="cell before">
-        <div class="cell-label">Öncesi</div>
-        <p>Çok sayıda ad set, segmentlere özel kampanyalar, <span class="highlight">karmaşık funnel yapıları.</span> Yapısal kompleksite bir uzmanlık göstergesiydi.</p>
-      </div>
-      <div class="cell after">
-        <div class="cell-label">Sonrası</div>
-        <p><span class="highlight">Sadeleşme zorunlu.</span> Daha az kampanya, daha az ad set, daha geniş hedefleme. Karmaşık yapılar algoritmanın öğrenme hızını kısıtlıyor.</p>
-      </div>
-    </div>
-
-    <div class="aspect-row">
-      <div class="aspect-header">
-        <span class="aspect-number">05</span>
-        <span class="aspect-icon">💰</span>
-        <span class="aspect-title">Bütçe Dağılımı ve Maliyet</span>
-      </div>
-      <div class="cell before">
-        <div class="cell-label">Öncesi</div>
-        <p>Bütçe kontrolü <span class="highlight">nispeten öngörülebilirdi.</span> Küçük bütçeler bile niş hedeflemeyle sonuç alabilirdi.</p>
-      </div>
-      <div class="cell after">
-        <div class="cell-label">Sonrası</div>
-        <p>Büyük bütçeler avantajlı; sistem yüksek data hacmiyle daha iyi öğreniyor. <span class="highlight">Küçük markaların CPA'sı yükseldi,</span> performans volatilitesi arttı.</p>
-      </div>
-    </div>
-
-    <div class="aspect-row">
-      <div class="aspect-header">
-        <span class="aspect-number">06</span>
-        <span class="aspect-icon">📊</span>
-        <span class="aspect-title">Ölçümleme ve Raporlama</span>
-      </div>
-      <div class="cell before">
-        <div class="cell-label">Öncesi</div>
-        <p>Attribution nispeten anlaşılırdı. <span class="highlight">Hangi kitle, hangi reklam, ne sonuç verdi</span> takip edilebilirdi.</p>
-      </div>
-      <div class="cell after">
-        <div class="cell-label">Sonrası</div>
-        <p><span class="highlight">Attribution bulanıklaştı.</span> Conversion lag arttı, ROI takibi karmaşıklaştı. Creative Similarity Report ve creative fatigue metrikleri kritik hale geldi.</p>
-      </div>
-    </div>
-
-    <div class="aspect-row">
-      <div class="aspect-header">
-        <span class="aspect-number">07</span>
-        <span class="aspect-icon">👥</span>
-        <span class="aspect-title">Ekip Yetkinlikleri</span>
-      </div>
-      <div class="cell before">
-        <div class="cell-label">Öncesi</div>
-        <p>Media buyer profili: <span class="highlight">platform bilgisi, bid stratejisi, kitle araştırması,</span> A/B test kurgusu.</p>
-      </div>
-      <div class="cell after">
-        <div class="cell-label">Sonrası</div>
-        <p><span class="highlight">Creative strategist + data analyst</span> profili ön planda. UGC üretim kapasitesi, kreatif pipeline hızı ve CAPI/data hygiene bilgisi belirleyici.</p>
-      </div>
-    </div>
-
-    <div class="aspect-row">
-      <div class="aspect-header">
-        <span class="aspect-number">08</span>
-        <span class="aspect-icon">🔗</span>
-        <span class="aspect-title">Veri Bağımlılığı</span>
-      </div>
-      <div class="cell before">
-        <div class="cell-label">Öncesi</div>
-        <p>Pixel verisi ve platform içi sinyaller yeterliydi. <span class="highlight">First-party data "nice to have"</span> konumundaydı.</p>
-      </div>
-      <div class="cell after">
-        <div class="cell-label">Sonrası</div>
-        <p><span class="highlight">CAPI entegrasyonu zorunlu.</span> Event Match Quality, deduplication ve first-party data kalitesi kritik. Meta'ya veri bağımlılığı derinleşiyor.</p>
-      </div>
-    </div>
-
-    <div class="aspect-row">
-      <div class="aspect-header">
-        <span class="aspect-number">09</span>
-        <span class="aspect-icon">⚔️</span>
-        <span class="aspect-title">Rekabet Dinamikleri</span>
-      </div>
-      <div class="cell before">
-        <div class="cell-label">Öncesi</div>
-        <p>İyi hedefleme yapan ajans, <span class="highlight">zayıf kreatifle bile sonuç alabilirdi.</span> Teknik kampanya yönetimi farklılaştırıcıydı.</p>
-      </div>
-      <div class="cell after">
-        <div class="cell-label">Sonrası</div>
-        <p>Kreatif kalitesi <span class="highlight">"eleme kriteri"</span> oldu. Zayıf kreatif auction'a bile giremiyor. Rekabet "kim daha iyi hikaye anlatır" üzerinden şekilleniyor.</p>
-      </div>
-    </div>
-
-    <div class="aspect-row">
-      <div class="aspect-header">
-        <span class="aspect-number">10</span>
-        <span class="aspect-icon">🤝</span>
-        <span class="aspect-title">Müşteri İlişkisi ve Beklenti Yönetimi</span>
-      </div>
-      <div class="cell before">
-        <div class="cell-label">Öncesi</div>
-        <p>"Bu ay CPA'yı %15 düşürdük" gibi <span class="highlight">net metriklerle raporlama</span> yapılabiliyordu. Performans nispeten stabil, güven kolaydı.</p>
-      </div>
-      <div class="cell after">
-        <div class="cell-label">Sonrası</div>
-        <p>Performans dalgalanmaları arttı. Ajans <span class="highlight">müşteriye eğitim vermek</span> zorunda: "kreatif yatırımını artır." Raporlama, kreatif strateji değerlendirmesine kaydı.</p>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Timeline -->
-  <div class="timeline-section">
-    <div class="timeline-header">
-      <span class="timeline-tag">Evrim Haritası</span>
-      <h3 class="timeline-title">Hedeflemeden Algoritmaya: Dönüşümün Zaman Çizelgesi</h3>
-    </div>
-    <div class="timeline">
-      <div class="timeline-track"></div>
-      <div class="timeline-node">
-        <div class="node-dot past"></div>
-        <div class="node-year">2022</div>
-        <div class="node-label">Advantage+ Lansmanı</div>
-        <div class="node-desc">Meta ilk kez otomasyon öncelikli kampanya yapısını tanıttı. Manuel kontrol hâlâ baskındı, ama sinyal verilmişti: platform kendi kararlarını almak istiyor.</div>
-      </div>
-      <div class="timeline-node">
-        <div class="node-dot past"></div>
-        <div class="node-year">2023</div>
-        <div class="node-label">MTIA Çip Ailesi</div>
-        <div class="node-desc">Meta kendi yapay zeka çiplerini (MTIA) devreye aldı. Reklam dağıtım altyapısı NVIDIA Grace Hopper ile yeniden tasarlandı. Andromeda'nın donanım temeli atıldı.</div>
-      </div>
-      <div class="timeline-node">
-        <div class="node-dot pilot"></div>
-        <div class="node-year">2024</div>
-        <div class="node-label">Andromeda Pilot</div>
-        <div class="node-desc">Yeni retrieval engine sınırlı hesaplarda test edildi. Model kompleksitesi 10.000x arttı. İlk adaptörler %8-10 performans artışı raporladı. Eski sistem artık bottleneck.</div>
-      </div>
-      <div class="timeline-node active">
-        <div class="node-dot now"></div>
-        <div class="node-year">2025</div>
-        <div class="node-label">Global Rollout</div>
-        <div class="node-desc">Ekim 2025'te tüm pazarlara açıldı. Manuel hedefleme fiilen devre dışı. Kampanya başına 3-6 reklam dönemi bitti; 8-15+ farklı konsept yeni standart. Ajanslar adapte ol ya da geride kal noktasında.</div>
-      </div>
-      <div class="timeline-node">
-        <div class="node-dot future"></div>
-        <div class="node-year">2026</div>
-        <div class="node-label">Ne Bekleniyor?</div>
-        <div class="node-desc">Generative AI ile otomatik kreatif varyasyon üretimi. Ajansın rolü "kreatif üretici"den "kreatif orkestratör"e kayacak. Veri ekosistemi kalitesi, bütçeden daha belirleyici rekabet avantajı olacak.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CTA -->
-  <div class="cta-section">
-    <div class="tag">Kozmonot Perspektifi</div>
-    <h3>Medya Ajansı Artık Bir "Kreatif Sinyal Mimarı"dır</h3>
-    <p style="margin-bottom: 14px;">Andromeda, medya sektöründe 20 yıldır süren bir dönemin kapanış bildirisidir. Hedefleme uzmanlığına dayanan ajans modeli artık bir commodity. Platform, kendi makine zekasını reklamverenin manuel kararlarının üzerine koydu. Bu, ajansların değersizleşmesi değil; değer üretim noktasının radikal biçimde yer değiştirmesidir.</p>
-    <p style="margin-bottom: 14px;">Bundan sonra kazanan ajans, en iyi kitleyi bulan değil, algoritmayı en iyi besleyen olacak. Bu da üç şey demek: birincisi, insanların farklı karar anlarına hitap eden kreatif çeşitlilik üretme kapasitesi. İkincisi, platformun öğrenme döngüsünü hızlandıracak veri hijyeni ve sinyal kalitesi. Üçüncüsü, müşteriyle ilişkiyi "kampanya yönetimi" seviyesinden "büyüme mühendisliği" seviyesine taşıyacak stratejik derinlik.</p>
-    <p>Sektörün büyük çoğunluğu hâlâ eski reflekslerle çalışıyor: dar kitleler, az kreatif, karmaşık yapılar. Andromeda bu yaklaşımı cezalandırıyor. Erken adapte olan ajanslar için bu bir tehdit değil, pazar payı kazanma fırsatı. Mesele artık medya satın almak değil, medya mimarisi kurmaktır.</p>
-  </div>
-
-  <div class="footer">
-    <p>Hazırlayan: Kozmonot</p>
-    <p class="sources">Kaynaklar: AdScale (Ara 2025) · The MTM Agency (Eki 2025) · Storyboard18 (Eki 2025) · Tyneside Marketing (Ara 2025) · StoreHero (Eki 2025) · Billo (Kas 2025) · Jon Loomer Digital (Ara 2025) · Medium/Yurenko (Eki 2025) · Expand Agency (Ara 2025) · Wonderkind (Kas 2025) · IMM Digital (2025) · Vaizle (Ara 2025)</p>
-  </div>
-
-</div>
-
+  <script>
+    // Reading progress
+    const progress = document.getElementById('progress');
+    const onScroll = () => {
+      const doc = document.documentElement;
+      const scrollTop = doc.scrollTop || document.body.scrollTop;
+      const scrollHeight = doc.scrollHeight - doc.clientHeight;
+      const p = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      progress.style.width = p.toFixed(2) + '%';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    // Sticky nav: scroll + active section
+    const nav = document.getElementById('stickyNav');
+    const buttons = Array.from(nav.querySelectorAll('.navBtn'));
+    const sections = buttons.map(b => document.querySelector(b.dataset.target)).filter(Boolean);
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const el = document.querySelector(btn.dataset.target);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    const setActive = (id) => {
+      buttons.forEach(b => b.classList.toggle('active', b.dataset.target === id));
+    };
+    const obs = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter(e => e.isIntersecting)
+        .sort((a,b) => (b.intersectionRatio - a.intersectionRatio))[0];
+      if (visible) setActive('#' + visible.target.id);
+    }, { root: null, threshold: [0.15, 0.25, 0.35] });
+    sections.forEach(s => obs.observe(s));
+    // Esc closes open details (nice UX)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('details[open]').forEach(d => d.removeAttribute('open'));
+      }
+    });
+  </script>
 </body>
 </html>

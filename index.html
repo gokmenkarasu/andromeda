@@ -414,21 +414,32 @@
     }
     .tGlow{ display: none; }
     @media (max-width: 1100px){
+      .timeline{ padding: 24px 16px 16px; }
       .tRow{ grid-template-columns: 1fr; gap: 0; }
       .tRow::before{
-        top: 0; bottom: 0; left: 7px; right: auto;
-        width: 3px; height: 100%;
-        background: var(--after);
+        top: 0; bottom: 0; left: 5px; right: auto;
+        width: 2px; height: 100%;
+        background: rgba(255,255,255,.12);
       }
       .tItem{
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 14px;
+        display: grid;
+        grid-template-columns: 14px 1fr;
+        gap: 2px 18px;
         text-align: left;
-        padding: 12px 0;
+        padding: 24px 0;
+        border-bottom: 1px solid rgba(255,255,255,.06);
       }
-      .tDot{ margin-top: 2px; }
-      .tItem p{ display: block; max-width: none; }
+      .tItem:last-child{ border-bottom: none; padding-bottom: 8px; }
+      .tDot{
+        grid-column: 1;
+        grid-row: 1 / -1;
+        align-self: start;
+        margin-top: 3px;
+        width: 12px; height: 12px;
+      }
+      .tYear{ grid-column: 2; font-size: 13px; margin-top: 0; }
+      .tItem h3{ grid-column: 2; margin: 2px 0 6px; font-size: 15px; }
+      .tItem p{ grid-column: 2; display: block; max-width: none; font-size: 13px; line-height: 1.6; }
     }
     /* manifesto */
     .manifesto{

@@ -398,6 +398,20 @@
       filter: blur(6px);
       z-index: 0;
     }
+    .tShimmer{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 120px;
+      height: 18px;
+      border-radius: 999px;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,.45) 0%, rgba(59,130,246,.3) 35%, transparent 70%);
+      filter: blur(4px);
+      z-index: 1;
+      pointer-events: none;
+      transform: translateX(calc(var(--shimmer, 0) * 1%));
+      transition: transform .15s ease-out;
+    }
     .tItem{
       border: none;
       background: transparent;
@@ -866,6 +880,7 @@
       </div>
       <div class="timeline">
         <div class="tRow" role="list">
+          <div class="tShimmer"></div>
           <div class="tItem" role="listitem">
             <div class="tDot"></div>
             <div class="tYear">2022</div>
@@ -958,8 +973,27 @@
       const p = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
       progress.style.width = p.toFixed(2) + '%';
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    // Timeline shimmer on scroll
+    const shimmer = document.querySelector('.tShimmer');
+    const tRow = document.querySelector('.tRow');
+    const updateShimmer = () => {
+      if (!tRow || !shimmer) return;
+      const rect = tRow.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const rowW = tRow.offsetWidth;
+      const shimW = 120;
+      const start = vh + 100;
+      const end = -rect.height - 100;
+      const t = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
+      const x = t * (rowW - shimW);
+      shimmer.style.transform = 'translateX(' + x + 'px)';
+    };
+    const onScrollAll = () => {
+      onScroll();
+      updateShimmer();
+    };
+    window.addEventListener('scroll', onScrollAll, { passive: true });
+    onScrollAll();
     // Sticky nav: scroll + active section
     const nav = document.getElementById('stickyNav');
     const buttons = Array.from(nav.querySelectorAll('.navBtn'));

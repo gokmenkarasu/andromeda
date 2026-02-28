@@ -982,8 +982,8 @@
       const vh = window.innerHeight;
       const rowW = tRow.offsetWidth;
       const shimW = 120;
-      const start = vh + 100;
-      const end = -rect.height - 100;
+      const start = vh;
+      const end = vh * 0.15;
       const t = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
       const x = t * (rowW - shimW);
       shimmer.style.transform = 'translateX(' + x + 'px)';

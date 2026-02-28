@@ -597,16 +597,42 @@
       pointer-events: none;
       z-index: -1;
     }
-    /* scroll reveal */
+    /* scroll reveal (initial state, GSAP handles animation) */
     .reveal{
       opacity: 0;
       transform: translateY(28px);
-      transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
     }
-    .reveal.visible{
-      opacity: 1;
-      transform: translateY(0);
+    /* lucide icons */
+    .tag svg, .quickIcon svg, .mfIcon svg{
+      width: 15px;
+      height: 15px;
+      stroke-width: 1.75;
+      flex: 0 0 auto;
     }
+    .quickIcon{
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      color: var(--after);
+      flex: 0 0 auto;
+    }
+    .quickIcon svg{ width: 16px; height: 16px; }
+    .mfIcon{
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid rgba(59,130,246,.2);
+      background: rgba(59,130,246,.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(147,197,253,.9);
+      margin-bottom: 10px;
+    }
+    .mfIcon svg{ width: 18px; height: 18px; }
     /* accordion open content fade */
     .content{
       animation: contentIn .35s ease;
@@ -672,14 +698,14 @@
         </div>
         <aside class="heroCard">
           <div class="metaRow">
-            <div class="tag"><b>Global Rollout</b>: Ekim 2025</div>
-            <div class="tag"><b>Engine</b>: AI-Driven Retrieval</div>
-            <div class="tag"><b>Format</b>: 10 Boyutlu Karşılaştırma</div>
+            <div class="tag"><i data-lucide="globe"></i><b>Global Rollout</b>: Ekim 2025</div>
+            <div class="tag"><i data-lucide="cpu"></i><b>Engine</b>: AI-Driven Retrieval</div>
+            <div class="tag"><i data-lucide="layers"></i><b>Format</b>: 10 Boyutlu Karşılaştırma</div>
           </div>
           <div class="quick" aria-label="Hızlı özet">
-            <div class="quickItem"><span class="bullet"></span><span>Eskiden fark yaratan: hedefleme ve karmaşık yapılardı. Artık fark yaratan: kreatif çeşitlilik, veri hijyeni ve öğrenme hızı.</span></div>
-            <div class="quickItem"><span class="bullet"></span><span>Attribution bulanıklaşıyor. Raporlama kreatif strateji ve sinyal kalitesine kayıyor.</span></div>
-            <div class="quickItem"><span class="bullet"></span><span>Ajans rolü media buying'den creative engineering'e evriliyor.</span></div>
+            <div class="quickItem"><span class="quickIcon"><i data-lucide="sparkles"></i></span><span>Eskiden fark yaratan: hedefleme ve karmaşık yapılardı. Artık fark yaratan: kreatif çeşitlilik, veri hijyeni ve öğrenme hızı.</span></div>
+            <div class="quickItem"><span class="quickIcon"><i data-lucide="bar-chart-3"></i></span><span>Attribution bulanıklaşıyor. Raporlama kreatif strateji ve sinyal kalitesine kayıyor.</span></div>
+            <div class="quickItem"><span class="quickIcon"><i data-lucide="arrow-right-left"></i></span><span>Ajans rolü media buying'den creative engineering'e evriliyor.</span></div>
           </div>
         </aside>
       </div>
@@ -991,14 +1017,17 @@
         <div class="mfTitle">Medya Ajansı Artık Bir "Kreatif Sinyal Mimarı"dır</div>
         <div class="mfGrid">
           <div class="mfCard">
+            <div class="mfIcon"><i data-lucide="eye"></i></div>
             <b>REALITY</b>
             <p>Hedefleme uzmanlığına dayanan ajans modeli artık bir commodity. Platform, makine zekasını manuel kararların üzerine koydu.</p>
           </div>
           <div class="mfCard">
+            <div class="mfIcon"><i data-lucide="shuffle"></i></div>
             <b>SHIFT</b>
             <p>Kazanan ajans en iyi kitleyi bulan değil, algoritmayı en iyi besleyen: kreatif çeşitlilik + veri hijyeni + sinyal kalitesi.</p>
           </div>
           <div class="mfCard">
+            <div class="mfIcon"><i data-lucide="rocket"></i></div>
             <b>OPPORTUNITY</b>
             <p>Dar kitle, az kreatif, karmaşık yapı cezalandırılıyor. Erken adapte olan ajanslar için bu pazar payı kazanma fırsatı.</p>
           </div>
@@ -1029,6 +1058,9 @@
       </div>
     </section>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
     // Reading progress
     const progress = document.getElementById('progress');
@@ -1086,25 +1118,28 @@
         document.querySelectorAll('details[open]').forEach(d => d.removeAttribute('open'));
       }
     });
-    // Scroll reveal animations
-    const revealEls = document.querySelectorAll('.secTitle, .panel, .timeline, .manifesto, section#kaynaklar .footer');
-    revealEls.forEach(el => el.classList.add('reveal'));
-    const revealObs = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          revealObs.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
-    revealEls.forEach(el => revealObs.observe(el));
+    // Lucide icons
+    lucide.createIcons();
+    // GSAP ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+    const ease = 'power3.out';
     // Hero entrance on load
-    document.querySelector('.brandKicker')?.classList.add('reveal');
-    document.querySelector('.hero > div:first-child')?.classList.add('reveal');
-    document.querySelector('.heroCard')?.classList.add('reveal');
-    setTimeout(() => document.querySelector('.brandKicker')?.classList.add('visible'), 80);
-    setTimeout(() => document.querySelector('.hero > div:first-child')?.classList.add('visible'), 200);
-    setTimeout(() => document.querySelector('.heroCard')?.classList.add('visible'), 380);
+    gsap.from('.brandKicker', { opacity: 0, y: 20, duration: .6, delay: .1, ease });
+    gsap.from('.hero > div:first-child', { opacity: 0, y: 30, duration: .7, delay: .2, ease });
+    gsap.from('.heroCard', { opacity: 0, y: 30, duration: .7, delay: .4, ease });
+    gsap.from('.tag', { opacity: 0, y: 10, duration: .4, stagger: .08, delay: .55, ease });
+    gsap.from('.quickItem', { opacity: 0, x: -12, duration: .4, stagger: .1, delay: .7, ease });
+    // Section reveals
+    gsap.utils.toArray('.secTitle').forEach(el => {
+      gsap.from(el, { opacity: 0, y: 24, duration: .6, ease, scrollTrigger: { trigger: el, start: 'top 88%' }});
+    });
+    gsap.from('.panel', { opacity: 0, y: 30, duration: .7, ease, scrollTrigger: { trigger: '.panel', start: 'top 85%' }});
+    gsap.from('details', { opacity: 0, y: 16, duration: .4, stagger: .05, ease, scrollTrigger: { trigger: '.panel', start: 'top 80%' }});
+    gsap.from('.timeline', { opacity: 0, y: 30, duration: .7, ease, scrollTrigger: { trigger: '.timeline', start: 'top 85%' }});
+    gsap.from('.tItem', { opacity: 0, y: 20, duration: .5, stagger: .1, ease, scrollTrigger: { trigger: '.tRow', start: 'top 82%' }});
+    gsap.from('.manifesto', { opacity: 0, y: 30, duration: .7, ease, scrollTrigger: { trigger: '.manifesto', start: 'top 85%' }});
+    gsap.from('.mfCard', { opacity: 0, y: 20, duration: .5, stagger: .12, ease, scrollTrigger: { trigger: '.mfGrid', start: 'top 85%' }});
+    gsap.from('.footer', { opacity: 0, y: 20, duration: .6, ease, scrollTrigger: { trigger: '.footer', start: 'top 92%' }});
   </script>
 </body>
 </html>

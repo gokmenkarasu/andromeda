@@ -528,10 +528,33 @@
       letter-spacing: .12em;
     }
     .mfTitle{
-      margin: 8px 0 10px;
-      font-size: 20px;
-      letter-spacing: -0.01em;
+      margin: 0 0 14px;
+      font-size: 22px;
+      letter-spacing: -0.02em;
       line-height: 1.25;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff 40%, rgba(147,197,253,.85) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .mfText{
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      columns: 2;
+      column-gap: 24px;
+    }
+    .mfText p{
+      margin: 0 0 12px;
+      color: rgba(255,255,255,.68);
+      line-height: 1.7;
+      font-size: 13px;
+      break-inside: avoid;
+    }
+    .mfText p:last-child{ margin-bottom: 0; }
+    @media (max-width: 980px){
+      .mfText{ columns: 1; }
     }
     .mfGrid{
       display:grid;
@@ -1032,21 +1055,10 @@
             <p>Dar kitle, az kreatif, karmaşık yapı cezalandırılıyor. Erken adapte olan ajanslar için bu pazar payı kazanma fırsatı.</p>
           </div>
         </div>
-        <div style="margin-top:14px; padding-top:14px; border-top: 1px solid var(--line);">
-          <p style="margin:0 0 12px; color: rgba(255,255,255,.78); line-height:1.7; font-size:14px;">
-            Andromeda, medya sektöründe 20 yıldır süren bir dönemin kapanış bildirisidir. Hedefleme uzmanlığına dayanan ajans modeli artık bir commodity.
-            Platform, kendi makine zekasını reklamverenin manuel kararlarının üzerine koydu. Bu, ajansların değersizleşmesi değil; değer üretim noktasının radikal biçimde yer değiştirmesidir.
-          </p>
-          <p style="margin:0 0 12px; color: rgba(255,255,255,.78); line-height:1.7; font-size:14px;">
-            Bundan sonra kazanan ajans, en iyi kitleyi bulan değil, algoritmayı en iyi besleyen olacak. Bu da üç şey demek:
-            birincisi, insanların farklı karar anlarına hitap eden kreatif çeşitlilik üretme kapasitesi.
-            Ikincisi, platformun öğrenme döngüsünü hızlandıracak veri hijyeni ve sinyal kalitesi.
-            Üçüncüsü, müşteriyle ilişkiyi "kampanya yönetimi" seviyesinden "büyüme mühendisliği" seviyesine taşıyacak stratejik derinlik.
-          </p>
-          <p style="margin:0; color: rgba(255,255,255,.78); line-height:1.7; font-size:14px;">
-            Sektörün büyük çoğunluğu hâlâ eski reflekslerle çalışıyor: dar kitleler, az kreatif, karmaşık yapılar. Andromeda bu yaklaşımı cezalandırıyor.
-            Erken adapte olan ajanslar için bu bir tehdit değil, pazar payı kazanma fırsatı. Mesele artık medya satın almak değil, medya mimarisi kurmaktır.
-          </p>
+        <div class="mfText">
+          <p>Andromeda, medya sektöründe 20 yıldır süren bir dönemin kapanış bildirisidir. Hedefleme uzmanlığına dayanan ajans modeli artık bir commodity. Platform, kendi makine zekasını reklamverenin manuel kararlarının üzerine koydu. Bu, ajansların değersizleşmesi değil; değer üretim noktasının radikal biçimde yer değiştirmesidir.</p>
+          <p>Bundan sonra kazanan ajans, en iyi kitleyi bulan değil, algoritmayı en iyi besleyen olacak. Bu da üç şey demek: birincisi, insanların farklı karar anlarına hitap eden kreatif çeşitlilik üretme kapasitesi. İkincisi, platformun öğrenme döngüsünü hızlandıracak veri hijyeni ve sinyal kalitesi. Üçüncüsü, müşteriyle ilişkiyi "kampanya yönetimi" seviyesinden "büyüme mühendisliği" seviyesine taşıyacak stratejik derinlik.</p>
+          <p>Sektörün büyük çoğunluğu hâlâ eski reflekslerle çalışıyor: dar kitleler, az kreatif, karmaşık yapılar. Andromeda bu yaklaşımı cezalandırıyor. Erken adapte olan ajanslar için bu bir tehdit değil, pazar payı kazanma fırsatı. Mesele artık medya satın almak değil, medya mimarisi kurmaktır.</p>
         </div>
       </div>
     </section>

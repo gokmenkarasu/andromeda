@@ -503,32 +503,10 @@
     }
     /* manifesto */
     .manifesto{
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border-radius: var(--radius2);
-      padding: 18px;
-      box-shadow: var(--shadow);
-    }
-    .mfHead{
-      display:flex;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .mfBadge{
-      display:inline-flex;
-      align-items:center;
-      gap: 10px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(59,130,246,.28);
-      background: rgba(59,130,246,.08);
-      color: rgba(147,197,253,.9);
-      font-size: 12px;
-      letter-spacing: .12em;
     }
     .mfTitle{
-      margin: 0 0 14px;
+      margin: 0 0 20px;
       font-size: 22px;
       letter-spacing: -0.02em;
       line-height: 1.25;
@@ -538,30 +516,18 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .mfText{
-      margin-top: 20px;
-    }
-    .mfText p{
-      margin: 0 0 14px;
-      color: rgba(255,255,255,.55);
-      line-height: 1.75;
-      font-size: 13.5px;
-    }
-    .mfText p:last-child{ margin-bottom: 0; }
     .mfGrid{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin-top: 16px;
     }
     @media (max-width: 980px){
       .mfGrid{ grid-template-columns: 1fr; }
     }
     .mfCard{
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
-      border-radius: 16px;
-      padding: 18px;
+      background: rgba(255,255,255,.04);
+      border-radius: 14px;
+      padding: 20px;
     }
     .mfCard b{
       display:block;
@@ -572,10 +538,22 @@
     }
     .mfCard p{
       margin:0;
-      color: rgba(255,255,255,.76);
+      color: rgba(255,255,255,.72);
       font-size: 14px;
       line-height: 1.55;
     }
+    .mfText{
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .mfText p{
+      margin: 0 0 14px;
+      color: rgba(255,255,255,.50);
+      line-height: 1.8;
+      font-size: 13.5px;
+    }
+    .mfText p:last-child{ margin-bottom: 0; }
     .footer{
       margin-top: 34px;
       color: var(--faint);
